@@ -1,28 +1,31 @@
 <template>
   <el-form
+    hide-required-asterisk
+    ref="formRef"
     :model="form"
     label-width="120px"
     label-position="top"
     size="large"
+    status-icon
     :rules="rules"
   >
     <el-form-item label="">
       <h1>Register</h1>
     </el-form-item>
-    <el-form-item label="Email address">
+    <el-form-item label="Email address" prop="email">
       <el-input
         v-model="form.email"
         type="email"
         placeholder="Please enter your email address"
       />
     </el-form-item>
-    <el-form-item label="User name">
+    <el-form-item label="User name" prop="username">
       <el-input
         v-model="form.username"
         placeholder="Please input your username"
       />
     </el-form-item>
-    <el-form-item label="Password">
+    <el-form-item label="Password" prop="password">
       <el-input
         v-model="form.password"
         type="password"
@@ -30,7 +33,7 @@
         show-password
       />
     </el-form-item>
-    <el-form-item label="Confirm Password">
+    <el-form-item label="Confirm Password" prop="conf_password">
       <el-input
         v-model="form.conf_password"
         type="password"
@@ -38,7 +41,7 @@
         show-password
       />
     </el-form-item>
-    <el-form-item label="Captcha">
+    <el-form-item label="Captcha" prop="captcha" >
       <el-col :span="19">
         <el-input v-model="form.captcha" placeholder="Please input"> </el-input>
       </el-col>
@@ -54,7 +57,7 @@
       </el-col>
     </el-form-item>
     <el-form-item>
-      <el-button type="primary" @click="onRegister">Register</el-button>
+      <el-button type="primary" @click="onRegister(formRef)">Register</el-button>
     </el-form-item>
   </el-form>
 </template>
@@ -62,6 +65,7 @@
 <script lang="ts" setup>
 import { ref, reactive } from "vue";
 import { ElMessage } from "element-plus";
+import type { FormInstance, FormRules } from 'element-plus'
 import axios from "axios";
 
 const emit = defineEmits(["redirect"]);
@@ -77,43 +81,37 @@ const form = reactive({
   captcha: "",
 });
 
-const checkEmail = (rule:any, value:any, callback:any) => {
-  if (value==="") {
-    return callback(new Error('Please input the email'))
-  }
-}
-
-const checkUsername = (rule:any, value:any, callback:any) => {
-  if (value==="") {
-    return callback(new Error('Please input the username'))
-  }
-}
-
-const checkPassword = (rule:any, value:any, callback:any) => {
-  if (value==="") {
-    return callback(new Error('Please input the password'))
-  }
-}
-
 const checkConfirmPassword = (rule:any, value:any, callback:any) => {
-  if (value==="") {
-    return callback(new Error('Please confirm the password'))
-  }
-}
-
-
-const checkCaptcha = (rule:any, value:any, callback:any) => {
-  if (value==="") {
-    return callback(new Error('Please input the captcha'))
+  if (value !== form.password) {
+    callback(new Error("Two inputs don't match!"))
+  } else {
+    callback() //必须加上callback（），要不然不会回调
   }
 }
 
 const rules = reactive({
-  email: [{ validator: checkEmail, trigger: 'blur' }],
-  username: [{ validator: checkUsername, trigger: 'blur' }],
-  password: [{ validator: checkPassword, trigger: 'blur' }],
-  conf_password: [{ validator: checkConfirmPassword, trigger: 'blur' }],
-  captcha: [{ validator:checkCaptcha, trigger: 'blur' }],
+  email: [
+    { required: true, message: "Please input email address", trigger: 'blur' },
+    {type: 'email', message: "Please input valid email address", trigger:['blur', 'change']},
+  ],
+  username: [
+    { required: true, trigger: 'blur' },
+    { min:3, message: "Username must be at least 3 letters", trigger:['blur', 'change']},
+    { max:20, message: "Username must be at most 20 characters", trigger:['blur','change']}
+  ],
+  password: [
+    { required: true, trigger: 'blur' },
+    { min:5, message: "Password must be at least 5 letters", trigger:['blur', 'change']},
+    { max:20, message: "Password must be at most 20 characters", trigger:['blur','change']}
+  ],
+  conf_password: [
+    { required: true,message:"Please confirm password!", trigger: 'blur' },
+    { validator: checkConfirmPassword, trigger: 'blur' },
+  ],
+  captcha: [
+    { required: true, trigger: 'blur' },
+    // { len:4, message: "Please input the valid captcha", trigger:['blur', 'change']},
+  ],
 })
 
 const sendCaptcha = () => {
@@ -146,9 +144,17 @@ const sendCaptcha = () => {
     });
 };
 
-const onRegister = (formEl:any) => {
-  if (!formEl) return
-  formEl.validate((valid:any) => {
+const formRef = ref<FormInstance>()
+
+const onRegister = (formEl: FormInstance | undefined) => {
+  //console.log("formEl:", formEl?.$data)
+  if (!formEl) {
+    //console.log("invalid formEl:", formEl)
+    return
+  }
+  //console.log("valid")
+  formEl.validate((valid: boolean)=>{
+    console.log("valid", valid)
     if (valid) {
       console.log('submit!')
       axios
@@ -168,8 +174,9 @@ const onRegister = (formEl:any) => {
           ElMessage.error(err.response.data);
         });
     } else {
-      console.log('error submit!')
-      return false
+      console.log('un-submit!')
+      ElMessage.error("Please enter the valid form!")
+      return false;
     }
   })
   // console.log("Register");

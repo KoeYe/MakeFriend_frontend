@@ -4,6 +4,7 @@ import LoginForm from "./LoginForm.vue";
 import RegisterForm from "./RegisterForm.vue";
 import ForgetPasswordForm from "./ForgetPasswordForm.vue";
 
+
 const form = reactive({ login: true, register: true });
 
 const onForgetPassword = () => {

@@ -1,16 +1,25 @@
 <template>
-  <el-form :model="form" label-width="120px" label-position="top" size="large">
+  <el-form
+    hide-required-asterisk
+    status-icon
+    ref="formRef"
+    :model="form"
+    label-width="120px"
+    label-position="top"
+    size="large"
+    :rules="rules"
+  >
     <el-form-item label="">
       <h1>Forget Password</h1>
     </el-form-item>
-    <el-form-item label="Email address">
+    <el-form-item label="Email address" prop="email">
       <el-input
         v-model="form.email"
         type="email"
         placeholder="Please input your email address"
       />
     </el-form-item>
-    <el-form-item label="Password">
+    <el-form-item label="Password" prop="password">
       <el-input
         v-model="form.password"
         type="password"
@@ -18,7 +27,7 @@
         show-password
       />
     </el-form-item>
-    <el-form-item label="Confirm new Password">
+    <el-form-item label="Confirm new Password" prop="conf_password">
       <el-input
         v-model="form.conf_password"
         type="password"
@@ -26,7 +35,7 @@
         show-password
       />
     </el-form-item>
-    <el-form-item label="Captcha">
+    <el-form-item label="Captcha" prop="captcha">
       <el-col :span="19">
         <el-input v-model="form.captcha" placeholder="Please input"> </el-input>
       </el-col>
@@ -42,7 +51,7 @@
       </el-col>
     </el-form-item>
     <el-form-item>
-      <el-button type="primary" @click="onForgetPassword">Submit</el-button>
+      <el-button type="primary" @click="onForgetPassword(formRef)">Submit</el-button>
     </el-form-item>
   </el-form>
 </template>
@@ -50,6 +59,7 @@
 <script lang="ts" setup>
 import { ref, reactive } from "vue";
 import { ElMessage } from "element-plus";
+import type { FormInstance } from "element-plus";
 import axios from "axios";
 
 const emit = defineEmits(["redirect"]);
@@ -63,6 +73,8 @@ const form = reactive({
   conf_password: "",
   captcha: "",
 });
+
+const formRef = ref<FormInstance>()
 
 const sendCaptcha = () => {
   console.log(captcha_btn_dis);
@@ -94,22 +106,61 @@ const sendCaptcha = () => {
     });
 };
 
-const onForgetPassword = () => {
-  // console.log("Register");
-  axios
-    .post("/api/user/forget_password", {
-      email: form.email,
-      password: form.password,
-      password_confirm: form.conf_password,
-      captcha: form.captcha,
-    })
-    .then((response) => {
-      ElMessage.success(response.data);
-      emit("redirect");
-    })
-    .catch((err) => {
-      // console.log(err);
-      ElMessage.error(err.response.data);
-    });
+const checkConfirmPassword = (rule:any, value:any, callback:any) => {
+  if (value!=form.password) {
+    return callback(new Error('Please confirm the password'))
+  } else {
+    callback();
+  }
+}
+
+const rules = reactive({
+  email: [
+    { required: true, message: "Please input email address", trigger: 'blur' },
+    {type: 'email', message: "Please input valid email address", trigger:['blur', 'change']},
+  ],
+  username: [
+    { required: true, trigger: 'blur' },
+    { min:3, message: "Username must be at least 3 letters", trigger:['blur', 'change']},
+    { max:20, message: "Username must be at most 20 characters", trigger:['blur','change']}
+  ],
+  password: [
+    { required: true, trigger: 'blur' },
+    { min:5, message: "Password must be at least 5 letters", trigger:['blur', 'change']},
+    { max:20, message: "Password must be at most 20 characters", trigger:['blur','change']}
+  ],
+  conf_password: [
+    { required: true,message:"Please confirm password!", trigger: 'blur' },
+    { validator: checkConfirmPassword, trigger: 'blur' },
+  ],
+  captcha: [
+    { required: true, trigger: 'blur' },
+    { len:4, message: "Please input the valid captcha", trigger:['blur', 'change']},
+  ],
+})
+
+const onForgetPassword = (formEl: FormInstance | undefined) => {
+  if (!formEl) return
+  formEl.validate((valid) => {
+    if (valid) {
+      axios
+        .post("/api/user/forget_password", {
+          email: form.email,
+          password: form.password,
+          password_confirm: form.conf_password,
+          captcha: form.captcha,
+        })
+        .then((response) => {
+          ElMessage.success(response.data);
+          emit("redirect");
+        })
+        .catch((err) => {
+          // console.log(err);
+          ElMessage.error(err.response.data);
+        });
+    } else {
+      ElMessage.error("Please enter the valid form!")
+    }
+  })
 };
 </script>

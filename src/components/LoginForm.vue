@@ -1,16 +1,25 @@
 <template>
-  <el-form :model="form" label-width="120px" size="large" label-position="top">
+  <el-form
+    hide-required-asterisk
+    status-icon
+    ref="formRef"
+    :model="form"
+    label-width="120px"
+    label-position="top"
+    size="large"
+    :rules="rules"
+  >
     <el-form-item label="">
       <h1>Login</h1>
     </el-form-item>
-    <el-form-item label="Email address">
+    <el-form-item label="Email address" prop="email">
       <el-input
         v-model="form.email"
         type="email"
         placeholder="Please enter your email address"
       />
     </el-form-item>
-    <el-form-item label="Password">
+    <el-form-item label="Password" prop="password">
       <el-input
         v-model="form.password"
         type="password"
@@ -19,7 +28,7 @@
       />
     </el-form-item>
     <el-form-item>
-      <el-button type="primary" @click="onLogin">Login</el-button>
+      <el-button type="primary" @click="onLogin(formRef)">Login</el-button>
     </el-form-item>
   </el-form>
 </template>
@@ -27,25 +36,46 @@
 <script lang="ts" setup>
 import axios from "axios";
 import { ElMessage } from "element-plus";
-import { reactive } from "vue";
+import { reactive, ref } from "vue";
+import type { FormInstance } from 'element-plus'
 // do not use same name with ref
 const form = reactive({
   email: "",
   password: "",
 });
 
-const onLogin = () => {
-  console.log("Login!");
-  axios
-    .post("/api/user/login", {
-      email: form.email,
-      password: form.password,
-    })
-    .then((responsive) => {
-      ElMessage.success(responsive.data);
-    })
-    .catch((err) => {
-      ElMessage.error(err.response.data);
-    });
+const rules = reactive({
+  email: [
+    {required: true, message: "Please input email address", trigger: 'blur'},
+    {type: 'email', message: "Please input valid email address", trigger:['blur', 'change']},
+  ],
+  password: [
+    { required: true, trigger: 'blur' },
+    { min:5, message: "Password must be at least 5 letters", trigger:['blur', 'change']},
+    { max:20, message: "Password must be at most 20 characters", trigger:['blur','change']}
+  ],
+})
+
+const formRef = ref<FormInstance>()
+
+const onLogin = (formEl: FormInstance | undefined) => {
+  if (!formEl) return
+  formEl.validate((valid) => {
+    if (valid) {
+    axios
+      .post("/api/user/login", {
+        email: form.email,
+        password: form.password,
+      })
+      .then((responsive) => {
+        ElMessage.success(responsive.data);
+      })
+      .catch((err) => {
+        ElMessage.error(err.response.data);
+      });
+    } else {
+      ElMessage.error("Please enter the valid form!")
+    }
+  })
 };
 </script>
