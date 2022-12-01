@@ -27,19 +27,19 @@ const onLogin = () => {
 </script>
 
 <template>
-  <div v-if="form.login">
-    <LoginForm />
-    <el-button @click="onForgetPassword">Forget password</el-button>
-    <el-button @click="onRegister">Register</el-button>
-  </div>
-  <div v-else-if="form.register">
-    <RegisterForm @redirect="onLogin" />
-    <el-button @click="onForgetPassword">Forget password</el-button>
-    <el-button @click="onLogin">Login</el-button>
-  </div>
-  <div v-else>
-    <ForgetPasswordForm @redirect="onLogin" />
-    <el-button @click="onLogin">Login</el-button>
-    <el-button @click="onRegister">Register</el-button>
-  </div>
+    <div v-if="form.login">
+      <LoginForm />
+      <el-button @click="onForgetPassword">Forget password</el-button>
+      <el-button @click="onRegister">Register</el-button>
+    </div>
+    <div v-else-if="form.register">
+      <RegisterForm @redirect="onLogin" />
+      <el-button @click="onForgetPassword">Forget password</el-button>
+      <el-button @click="onLogin">Login</el-button>
+    </div>
+    <div v-else>
+      <ForgetPasswordForm @redirect="onLogin" />
+      <el-button @click="onLogin">Login</el-button>
+      <el-button @click="onRegister">Register</el-button>
+    </div>
 </template>

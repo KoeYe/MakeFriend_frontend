@@ -110,7 +110,6 @@ const rules = reactive({
   ],
   captcha: [
     { required: true, trigger: 'blur' },
-    // { len:4, message: "Please input the valid captcha", trigger:['blur', 'change']},
   ],
 })
 
@@ -147,12 +146,9 @@ const sendCaptcha = () => {
 const formRef = ref<FormInstance>()
 
 const onRegister = (formEl: FormInstance | undefined) => {
-  //console.log("formEl:", formEl?.$data)
   if (!formEl) {
-    //console.log("invalid formEl:", formEl)
     return
   }
-  //console.log("valid")
   formEl.validate((valid: boolean)=>{
     console.log("valid", valid)
     if (valid) {

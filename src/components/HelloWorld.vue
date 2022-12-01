@@ -8,13 +8,22 @@ defineProps({
 </script>
 
 <template>
-  <div class="greetings">
-    <h1 class="green">{{ msg }}</h1>
-    <h3>
-      This is the website for my coursework by using
-      <a href="https://vitejs.dev/" target="_blank" rel="noopener">Vite</a> +
-      <a href="https://vuejs.org/" target="_blank" rel="noopener">Vue 3</a>.
-    </h3>
+  <img
+      alt="Vue logo"
+      class="logo"
+      src="@/assets/logo.svg"
+      width="125"
+      height="125"
+  />
+  <div class="wrapper">
+    <div class="greetings">
+      <h1 class="green">{{ msg }}</h1>
+      <h3>
+        This is the website for my coursework by using
+        <a href="https://vitejs.dev/" target="_blank" rel="noopener">Vite</a> +
+        <a href="https://vuejs.org/" target="_blank" rel="noopener">Vue 3</a>.
+      </h3>
+    </div>
   </div>
 </template>
 
@@ -39,5 +48,15 @@ h3 {
   .greetings h3 {
     text-align: left;
   }
+}
+.wrapper {
+    display: flex;
+    place-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .logo {
+  display: block;
+  margin: 0 auto 2rem;
 }
 </style>

@@ -5,21 +5,11 @@ import TheWelcome from "../components/TheWelcome.vue";
 
 <template>
   <header>
-    <img
-      alt="Vue logo"
-      class="logo"
-      src="@/assets/logo.svg"
-      width="125"
-      height="125"
-    />
-
-    <div class="wrapper">
-      <HelloWorld msg="Hello!" />
-      <!-- <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/index">Index</RouterLink>
-      </nav> -->
-    </div>
+    <HelloWorld msg="Hello!" />
+    <!-- <nav>
+      <RouterLink to="/">Home</RouterLink>
+      <RouterLink to="/index">Index</RouterLink>
+    </nav> -->
   </header>
   <main>
     <TheWelcome />
@@ -30,11 +20,6 @@ import TheWelcome from "../components/TheWelcome.vue";
 header {
   line-height: 1.5;
   max-height: 100vh;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
 }
 
 nav {

@@ -38,6 +38,7 @@ import axios from "axios";
 import { ElMessage } from "element-plus";
 import { reactive, ref } from "vue";
 import type { FormInstance } from 'element-plus'
+import { useRouter, useRoute } from 'vue-router'
 // do not use same name with ref
 const form = reactive({
   email: "",
@@ -56,6 +57,8 @@ const rules = reactive({
   ],
 })
 
+const router = useRouter()
+
 const formRef = ref<FormInstance>()
 
 const onLogin = (formEl: FormInstance | undefined) => {
@@ -69,6 +72,7 @@ const onLogin = (formEl: FormInstance | undefined) => {
       })
       .then((responsive) => {
         ElMessage.success(responsive.data);
+        router.push("/index");
       })
       .catch((err) => {
         ElMessage.error(err.response.data);
