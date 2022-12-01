@@ -6,6 +6,9 @@ import router from './router'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
 import './assets/main.css'
+import axios from 'axios';
+
+axios.defaults.withCredentials=true;
 
 const app = createApp(App)
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {

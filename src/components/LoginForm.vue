@@ -71,10 +71,17 @@ const onLogin = (formEl: FormInstance | undefined) => {
         password: form.password,
       })
       .then((responsive) => {
-        ElMessage.success(responsive.data);
+        //const res = JSON.parse(responsive.data)
+        //console.log(responsive.data)
+        ElMessage.success(responsive.data.message);
         router.push("/index");
+        sessionStorage.setItem("username", responsive.data.username)
+        //const username = sessionStorage.getItem("username");
+        //console.log("username in session:",username)
+        sessionStorage.setItem("id", responsive.data.id)
       })
       .catch((err) => {
+        //console.log(err)
         ElMessage.error(err.response.data);
       });
     } else {

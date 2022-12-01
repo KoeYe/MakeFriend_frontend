@@ -1,9 +1,39 @@
 <script lang="ts" setup>
+import { ref, watch, reactive } from "vue"
 import TextEditor from "../components/TextEditor.vue";
-import {
-  Check,
-  Delete,
-} from '@element-plus/icons-vue'
+import ModelContent from "../components/model/ModelComponent.vue"
+import axios from "axios";
+import { ElMessage } from "element-plus";
+const drawer = ref(false);
+const username = sessionStorage.getItem("username");
+const model_title = ref("Hello " + username)
+const search_content= ref("")
+let users = ref([{
+  id: "",
+  username: ""
+}])
+let head_info = "Start charting..."
+
+watch(search_content, async (newSearch:string, oldSearch:string) => {
+  if(newSearch.length!=0){
+    axios
+    .post("/api/search", {
+      search_content: newSearch
+    })
+    .then((res) => {
+      //console.log(res.data)
+      console.log(users.value)
+      users.value = res.data.users
+    })
+    .catch((err) => {
+      ElMessage.error(err.response.data)
+    })
+  }
+})
+
+const onModel = () => {
+  drawer.value = true;
+}
 </script>
 
 <template>
@@ -17,23 +47,28 @@ import {
               style="height: 40px"
               plain
               type="info"
+              @click="onModel()"
             ><el-icon><Expand /></el-icon></el-button>
           </el-col>
           <el-col :span="20">
             <!-- <el-button type="danger" :icon="Delete" circle /> -->
-            <el-input style="height: 40px" placeholder="Search..."></el-input>
+            <el-input style="height: 40px" placeholder="Search..." v-model="search_content"></el-input>
           </el-col>
         </el-row>
+        <div v-for="user in users">
+          <el-row class="mb-4" style="height: 60px; padding-top: 10px;">
+            {{ user.id }} | {{ user.username }}
+          </el-row>
+        </div>
       </div>
     </el-aside>
     <el-container :span="20">
         <el-header>
           <el-row class="mb-4" style="height: 60px; padding-top: 10px;">
-            <el-col :span="4">
-              <h1>Hello</h1>
-              <h5>start chart..</h5>
+            <el-col :span="10">
+              <h1 style="height: 40px; padding-top: 10px;">{{ head_info }}</h1>
             </el-col>
-            <el-col :span="1" :offset="19">
+            <el-col :span="1" :offset="13">
               <el-button style="height: 40px; padding-top: 10px;"><el-icon><MoreFilled /></el-icon></el-button>
             </el-col>
           </el-row>
@@ -42,10 +77,20 @@ import {
           <router-view></router-view>
         </el-main>
         <el-footer>
-          <TextEditor></TextEditor>
+          <TextEditor />
         </el-footer>
     </el-container>
   </el-container>
+  <el-drawer
+    v-model="drawer"
+    :title=model_title
+    direction="ltr"
+    close-on-press-escape
+    show-close=false
+    size="25%"
+  >
+    <ModelContent />
+  </el-drawer>
 </template>
 
 <style scoped>
