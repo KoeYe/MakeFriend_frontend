@@ -1,4 +1,5 @@
 <template>
+    <div>
     <el-form
         hide-required-asterisk
         ref="formRef"
@@ -23,6 +24,7 @@
         </el-col>
     </el-form-item>
     </el-form>
+</div>
 </template>
 
 <script lang="ts" setup>
