@@ -20,6 +20,11 @@ const router = createRouter({
           path: "index",
           name: "index",
           component: () => import("@/components/HelloWorld.vue"),
+        },
+        {
+          path: "session",
+          name: "session",
+          component: () => import("@/components/SessionComponent/SessionComponent.vue")
         }
       ],
     },
