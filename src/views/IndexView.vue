@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref, watch, reactive } from "vue"
 import TextEditor from "../components/TextEditor.vue";
-import ModelContent from "../components/model/ModelComponent.vue"
+import ModelContent from "../components/ModelComponent/ModelComponent.vue"
 import axios from "axios";
 import { ElMessage } from "element-plus";
 import { useRouter } from "vue-router";
