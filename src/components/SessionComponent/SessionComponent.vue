@@ -9,6 +9,7 @@ let user1_id = ref()
 let user2_id = ref()
 let is_friend = ref()
 const route = useRoute()
+
 watch(
   () => route.params.session_id,
   async newId => {
@@ -28,18 +29,21 @@ const getSession = (session_id:any) => {
 }
 
 const checkFriends = (user1_id:any) => {
+  console.log("checkFriends", user1_id)
   axios
   .get("/api/user/make_friend?user1_id="+user1_id+"&user2_id="+sessionStorage.getItem("id"))
   .then((res)=>{
     is_friend.value = res.data
-    console.log(is_friend.value)
+   //console.log(is_friend.value)
   })
 }
+getSession(route.params.session_id)
+checkFriends(route.params.session_id)
 </script>
 <template>
 <el-container>
   <el-header>
-    <Header :user1_id="user1_id" :session_id="route.params.session_id" :is_friend="is_friend"/>
+    <Header :user1_id="user1_id" :session_id="route.params.session_id" :is_friend="is_friend" @checkFriend="checkFriends(user1_id)"/>
     <!-- {{user1_id.value}} -->
   </el-header>
   <el-main>

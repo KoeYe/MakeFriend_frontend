@@ -3,7 +3,7 @@ import { ref, watch } from "vue"
 import axios from 'axios';
 import { ElMessage } from "element-plus";
 import { ElMessageBox } from 'element-plus'
-
+const emit = defineEmits(['getSession', 'checkFriend'])
 const dialogVisible = ref(false)
 const props = defineProps(["user1_id", "session_id", "is_friend"])
 let user1_username = ref("")
@@ -11,7 +11,7 @@ const dropdown1 = ref()
 watch(
     ()=>props.user1_id,
     async (NewId:string)=>{
-        console.log(props.user1_id)
+        //console.log(props.user1_id)
         getUser(NewId)
     }
 )
@@ -47,6 +47,9 @@ const addFriend = (id:string) => {
       })
       .then((res)=>{
         ElMessage.success(res.data)
+        //console.log(props.is_friend)
+        emit('checkFriend')
+        //console.log(props.is_friend)
       })
       .catch((err)=>{
         ElMessage.error(err.response.data)
@@ -56,13 +59,14 @@ const addFriend = (id:string) => {
 const deleteFriend = (id:string) => {
   dialogVisible.value = false
   axios
-   .delete("/api/user/make_friend?user1_id="+id+"&user2_id="+sessionStorage.getItem("id"))
-   .then((res)=>{
+    .delete("/api/user/make_friend?user1_id="+id+"&user2_id="+sessionStorage.getItem("id"))
+    .then((res)=>{
     ElMessage.success(res.data)
-   })
-   .catch((err)=>{
+    emit('checkFriend')
+    })
+    .catch((err)=>{
     ElMessage.error(err.response.data)
-   });
+    });
 }
 </script>
 <template>
