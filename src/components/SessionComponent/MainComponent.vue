@@ -1,7 +1,16 @@
 <template>
 <div>
     <div v-for="mess of message">
-        <el-card style="margin:10px" shadow="hover">{{mess.content}}</el-card>
+        <div v-if="(mess.user_id==user_id)">
+            <el-row justify="end">
+                <el-card style="margin:10px; text-align: right; width:fit-content;" shadow="hover">{{mess.content}}</el-card>
+            </el-row>
+        </div>
+        <div v-if="(mess.user_id!=user_id)">
+            <el-row justify="start">
+                <el-card style="margin:10px; text-align: left; width:fit-content;" shadow="hover">{{mess.content}}</el-card>
+            </el-row>
+        </div>
     </div>
 </div>
 </template>
@@ -12,17 +21,19 @@ import { ref, watch } from "vue"
 import { useRoute } from "vue-router"
 //console.log("hello session!")
 let props = defineProps(["session_id"])
-let message = ref([])
+let message:any = ref([])
+const user_id = sessionStorage.getItem('id')
 const getMessage = () => {
     axios.
     get("/api/session/message?session_id="+props.session_id)
     .then((res)=>{
         message.value = res.data.messages;
-        console.log(message.value.length)
+        console.log(message.value)
+        //console.log(message.value.length)
     })
     setTimeout(()=>{
-        //getMessage()
-    },5000)
+        getMessage()
+    },1000)
 }
 getMessage()
 </script>

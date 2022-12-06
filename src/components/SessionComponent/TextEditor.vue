@@ -49,8 +49,6 @@ const onSend = (formEl: FormInstance | undefined)=>{
     }
     formEl.validate((valid: boolean)=>{
         if (valid) {
-            ElMessage.info("Sending message...")
-            console.log("Sending message..")
             //socket.emit('send', form.text);
             axios
             .post("/api/session/message",{
