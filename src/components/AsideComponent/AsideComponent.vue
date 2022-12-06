@@ -51,6 +51,7 @@ let users = ref([{
 
 const setSession = (id:String) => {
   //ElMessage.info("Setting session...")
+  //console.log(id)
   axios
     .post("/api/session/session", {
       user1_id: id,
@@ -89,7 +90,7 @@ const onModel = () => {
           <el-table-column prop="username" style="width: 100%"/>
       </el-table> -->
       <div v-for="user of users">
-          <el-card style="margin:10px" shadow="hover" @click="setSession(user.id)"> {{user.username}} </el-card>
+          <el-card style="margin:10px" shadow="hover" @click="setSession(user.id)">{{user.username}} </el-card>
       </div>
     </div>
 </div>

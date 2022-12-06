@@ -13,23 +13,25 @@ const route = useRoute()
 watch(
   () => route.params.session_id,
   async newId => {
+  console.log("session_id: " + newId)
   getSession(newId)
-  checkFriends(newId)
-  console.log(user1_id.value, user2_id.value)
+  //console.log("user1:",user1_id.value,"user2:",user2_id.value)
   }
 )
 const getSession = (session_id:any) => {
   axios
-  .get("/api/session/session?session_id="+session_id)
+  .get("/api/session/session?session_id="+session_id+"&user_id="+sessionStorage.getItem("id"))
   .then((res)=>{
     user1_id.value = res.data.user1_id
     user2_id.value = res.data.user2_id
-    //console.log(user1_id.value, user2_id.value, session_id)
+    console.log(res.data)
+    console.log(user1_id.value, user2_id.value, session_id)
+    checkFriends(user1_id.value)
   })
 }
 
 const checkFriends = (user1_id:any) => {
-  console.log("checkFriends", user1_id)
+  // console.log("checkFriends", user1_id)
   axios
   .get("/api/user/make_friend?user1_id="+user1_id+"&user2_id="+sessionStorage.getItem("id"))
   .then((res)=>{
@@ -38,7 +40,7 @@ const checkFriends = (user1_id:any) => {
   })
 }
 getSession(route.params.session_id)
-checkFriends(route.params.session_id)
+checkFriends(user1_id.value)
 </script>
 <template>
 <el-container>
@@ -47,10 +49,10 @@ checkFriends(route.params.session_id)
     <!-- {{user1_id.value}} -->
   </el-header>
   <el-main>
-    <Main :session_id="route.params.session_id" />
+    <Main :session_id="route.params.session_id"/>
   </el-main>
   <el-footer>
-    <TextEditor :user2_id="user2_id" />
+    <TextEditor :user2_id="user2_id" :session_id="route.params.session_id"/>
   </el-footer>
 </el-container>
 </template>

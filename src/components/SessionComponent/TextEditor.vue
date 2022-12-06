@@ -28,9 +28,21 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref } from "vue";
+import { reactive, ref,getCurrentInstance, onMounted, onBeforeUnmount } from "vue";
 import { ElMessage, FormInstance } from "element-plus";
-
+import { io, Socket } from "socket.io-client"
+import axios from "axios";
+// let socket: Socket<DefaultEventsMap, DefaultEventsMap>;
+// onMounted(() => {
+//     console.log("onMounted")
+//     socket = io("ws://127.0.0.1:8000")
+//     socket.on('connect', () => console.log('connect: websocket 连接成功！'))
+// });
+// onBeforeUnmount(() => {
+//     socket.on('disconnect', () => console.log('disconnect: websocket 连接关闭！'))
+//     socket.close();
+// });
+const props = defineProps(["session_id", "user2_id"])
 const onSend = (formEl: FormInstance | undefined)=>{
     if (!formEl) {
         return
@@ -38,6 +50,20 @@ const onSend = (formEl: FormInstance | undefined)=>{
     formEl.validate((valid: boolean)=>{
         if (valid) {
             ElMessage.info("Sending message...")
+            console.log("Sending message..")
+            //socket.emit('send', form.text);
+            axios
+            .post("/api/session/message",{
+                session_id: props.session_id,
+                user_id: sessionStorage.getItem("id"),
+                content: form.text
+            })
+            .then((res)=>{
+                ElMessage.success(res.data)
+            })
+            .catch((err)=>{
+                ElMessage.error(err)
+            });
         }
         else {
             ElMessage.error("Invalid message!");

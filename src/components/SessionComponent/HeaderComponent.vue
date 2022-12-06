@@ -16,10 +16,11 @@ watch(
     }
 )
 const getUser = (id:string) => {
+  console.log("id:",id)
 axios
   .get("/api/user/username?id="+id)
   .then((res)=>{
-    //console.log(res.data)
+    console.log(res.data)
     user1_username.value = res.data
   })
 }
