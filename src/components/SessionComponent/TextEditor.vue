@@ -29,9 +29,10 @@
 
 <script lang="ts" setup>
 import { reactive, ref,getCurrentInstance, onMounted, onBeforeUnmount } from "vue";
-import { ElMessage, FormInstance } from "element-plus";
+import { ElButton, ElCol, ElForm, ElFormItem, ElInput, ElMessage, FormInstance } from "element-plus";
 import { io, Socket } from "socket.io-client"
 import axios from "axios";
+// import { DefaultEventsMap } from "socket.io-client/build/typed-events";
 // let socket: Socket<DefaultEventsMap, DefaultEventsMap>;
 // onMounted(() => {
 //     console.log("onMounted")
@@ -58,6 +59,7 @@ const onSend = (formEl: FormInstance | undefined)=>{
             })
             .then((res)=>{
                 ElMessage.success(res.data)
+                form.text = ""
             })
             .catch((err)=>{
                 ElMessage.error(err)

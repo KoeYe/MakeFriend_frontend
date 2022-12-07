@@ -3,7 +3,7 @@
     <div v-for="mess of message">
         <div v-if="(mess.user_id==user_id)">
             <el-row justify="end">
-                <el-card style="margin:10px; text-align: right; width:fit-content;" shadow="hover">{{mess.content}}</el-card>
+                <el-card style="margin:10px; text-align: right; width:fit-content;background-color: rgb(239, 253, 222);" shadow="hover">{{mess.content}}</el-card>
             </el-row>
         </div>
         <div v-if="(mess.user_id!=user_id)">
@@ -33,7 +33,7 @@ const getMessage = () => {
     })
     setTimeout(()=>{
         getMessage()
-    },1000)
+    },10000)
 }
 getMessage()
 </script>

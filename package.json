@@ -17,6 +17,7 @@
     "vue-socket.io": "^3.0.10"
   },
   "devDependencies": {
+    "@arco-design/web-vue": "^2.39.2",
     "@types/node": "^18.11.9",
     "@types/socket.io-client": "^3.0.0",
     "@vitejs/plugin-vue": "^3.2.0",

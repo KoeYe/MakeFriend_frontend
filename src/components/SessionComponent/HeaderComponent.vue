@@ -74,7 +74,7 @@ const deleteFriend = (id:string) => {
 <div>
     <el-row class="mb-4" style="height: 60px; padding-top: 10px;">
     <el-col :span="10">
-        <h1 style="height: 40px; padding-top: 10px;">{{user1_username}}</h1>
+        <h2>{{user1_username}}</h2>
     </el-col>
     <el-col :span="1" :offset="13">
         <div v-if="(props.is_friend==0)">

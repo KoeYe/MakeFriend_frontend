@@ -94,14 +94,14 @@ const onModel = () => {
       </div>
     </div>
 </div>
-    <el-drawer
+<el-drawer
+    :with-header="false"
     v-model="drawer"
-    :title=model_title
     direction="ltr"
     close-on-press-escape
     :show-close=false
     size="25%"
   >
-    <ModelContent />
+    <ModelContent :title_="username" :id="id"/>
   </el-drawer>
 </template>
