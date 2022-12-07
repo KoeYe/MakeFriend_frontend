@@ -69,7 +69,7 @@ let user_ = ref({
   address: "",
   place: "",
   tel: "",
-  remarks: 0
+  remarks: 0,
 })
 
 const getProfile = () => {
@@ -98,10 +98,12 @@ const submit = () => {
     'tel': form.tel ? form.tel : user_.value.tel,
     'address': form.address ? form.address : user_.value.address,
     'place': form.place ? form.place : user_.value.place,
-    'remarks': form.remarks ? form.remarks : user_.value.remarks,
+    'remarks': form.remarks>=0 ? form.remarks : user_.value.remarks,
   })
   .then((res) => {
     ElMessage.success("Edit profile successfully!")
+    dialogFormVisible.value = false;
+    getProfile()
   })
   .catch((err)=>{
     ElMessage.error(err.response.data)
@@ -180,10 +182,10 @@ const submit = () => {
             Remarks
           </div>
         </template>
-        <div v-if="(user_.remarks==0)">
+        <div v-if="(user_.remarks=='0')">
           <el-tag size="small">School</el-tag>
         </div>
-        <div v-else-if="(user_.remarks==1)">
+        <div v-else-if="(user_.remarks=='1')">
           <el-tag size="small">Office</el-tag>
         </div>
       </el-descriptions-item>
@@ -322,9 +324,9 @@ const submit = () => {
             Remarks
           </div>
         </template>
-        <el-select v-model="form.remarks" autocomplete="off">
-          <el-option label="school" :value="1"><el-tag size="small">School</el-tag></el-option>
-          <el-option label="office" :value=0><el-tag size="small">Office</el-tag></el-option>
+        <el-select v-model="form.remarks" autocomplete="off" :placeholder="user_.remarks">
+          <el-option label="school" :value=0><el-tag size="small">School</el-tag></el-option>
+          <el-option label="office" :value=1><el-tag size="small">Office</el-tag></el-option>
         </el-select>
       </el-descriptions-item>
       <el-descriptions-item>
