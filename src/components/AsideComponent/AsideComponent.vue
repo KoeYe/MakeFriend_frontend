@@ -32,7 +32,6 @@ watch(search_content, async (newSearch:string, oldSearch:string) => {
   }
 })
 
-
 const loadFriends = (id: string | null) => {
   axios
     .get("/api/user/friends?user2_id="+id)

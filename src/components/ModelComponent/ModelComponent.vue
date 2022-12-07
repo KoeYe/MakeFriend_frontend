@@ -2,13 +2,22 @@
 import axios from "axios"
 import {ElMessage} from "element-plus"
 import {useRouter} from "vue-router"
-import { ref } from "vue"
+import { ref,computed,reactive } from "vue"
 import IconEdit from '@arco-design/web-vue/es/icon/icon-edit';
 import IconPlus from '@arco-design/web-vue/es/icon/icon-plus';
-const dialogImageUrl = ref('')
+import {
+  Iphone,
+  Location,
+  OfficeBuilding,
+  Tickets,
+  User,
+  Edit,
+} from '@element-plus/icons-vue'
 const dialogVisible = ref(false)
-
+const dialogImageUrl = ref('')
 const file = ref();
+const formLabelWidth = '140px'
+
 
 const onChange = (_: any, currentFile: any) => {
   file.value = {
@@ -20,6 +29,22 @@ const onChange = (_: any, currentFile: any) => {
 const onProgress = (currentFile: any) => {
   file.value = currentFile;
 };
+
+const size = ref('large')
+const iconStyle = computed(() => {
+  const marginMap:any = {
+    large: '8px',
+    default: '6px',
+    small: '4px',
+  }
+  return {
+    marginRight: marginMap[size.value] || marginMap.default,
+  }
+})
+
+const editInformation = () => {
+  dialogFormVisible.value = true;
+}
 
 const router = useRouter();
 const centerDialogVisible = ref(false)
@@ -35,8 +60,54 @@ const logout = () => {
       ElMessage.error("Log out failed!")
     })
 }
+const dialogFormVisible = ref(false)
 const props = defineProps(["title_", "id"])
 const avatar_url = "/api/user/avatar?id="+props.id
+
+let user_ = ref({
+  username: "",
+  address: "",
+  place: "",
+  tel: "",
+  remarks: 0
+})
+
+const getProfile = () => {
+  axios
+    .get("/api/user/profile?id="+props.id)
+    .then((res)=>{
+      user_.value = res.data
+      console.log(user_.value)
+    })
+}
+getProfile()
+
+const form = reactive({
+  username: user_.value.username,
+  tel: user_.value.tel,
+  address: user_.value.address,
+  place: user_.value.place,
+  remarks: user_.value.remarks,
+})
+
+const submit = () => {
+  axios
+  .post("/api/user/profile", {
+    'id': props.id,
+    'username': form.username ? form.username : user_.value.username,
+    'tel': form.tel ? form.tel : user_.value.tel,
+    'address': form.address ? form.address : user_.value.address,
+    'place': form.place ? form.place : user_.value.place,
+    'remarks': form.remarks ? form.remarks : user_.value.remarks,
+  })
+  .then((res) => {
+    ElMessage.success("Edit profile successfully!")
+  })
+  .catch((err)=>{
+    ElMessage.error(err.response.data)
+  })
+}
+
 </script>
 
 <template>
@@ -50,10 +121,86 @@ const avatar_url = "/api/user/avatar?id="+props.id
           :src="avatar_url"
         />
       </el-col>
-      <el-col :span="15">
-        <h2 style="line-height: 46.5px;">{{props.title_}}</h2>
+      <el-col :span="10">
+        <h2 style="lie-height: 46.5px;vertical-align: middle;position:relative;top:3.5px">{{props.title_}}</h2>
+      </el-col>
+      <el-col :span="1">
+        <el-icon style="height: 46.5px;cursor:pointer" @click="editInformation">
+          <edit />
+        </el-icon>
       </el-col>
     </el-row>
+    <el-row>
+      <el-descriptions
+        class="margin-top"
+        title="Information"
+        :column="1"
+        :size="size"
+        border
+      >
+      <el-descriptions-item>
+        <template #label>
+          <div class="cell-item">
+            <el-icon :style="iconStyle">
+              <user />
+            </el-icon>
+            Username
+          </div>
+        </template>
+        {{user_.username}}
+      </el-descriptions-item>
+      <el-descriptions-item>
+        <template #label>
+          <div class="cell-item">
+            <el-icon :style="iconStyle">
+              <iphone />
+            </el-icon>
+            Telephone
+          </div>
+        </template>
+        {{user_.tel}}
+      </el-descriptions-item>
+      <el-descriptions-item>
+        <template #label>
+          <div class="cell-item">
+            <el-icon :style="iconStyle">
+              <location />
+            </el-icon>
+            Place
+          </div>
+        </template>
+        {{user_.place}}
+      </el-descriptions-item>
+      <el-descriptions-item>
+        <template #label>
+          <div class="cell-item">
+            <el-icon :style="iconStyle">
+              <tickets />
+            </el-icon>
+            Remarks
+          </div>
+        </template>
+        <div v-if="(user_.remarks==0)">
+          <el-tag size="small">School</el-tag>
+        </div>
+        <div v-else-if="(user_.remarks==1)">
+          <el-tag size="small">Office</el-tag>
+        </div>
+      </el-descriptions-item>
+      <el-descriptions-item>
+        <template #label>
+          <div class="cell-item">
+            <el-icon :style="iconStyle">
+              <office-building />
+            </el-icon>
+            Address
+          </div>
+        </template>
+        {{user_.address}}
+      </el-descriptions-item>
+      </el-descriptions>
+    </el-row>
+    <el-divider />
     <el-row class="mb-4">
       <el-button @click="logout()" type="danger"><el-icon><SwitchButton /></el-icon>logout</el-button>
     </el-row>
@@ -123,4 +270,96 @@ const avatar_url = "/api/user/avatar?id="+props.id
       </span>
     </template>
   </el-dialog>
+
+  <el-dialog v-model="dialogFormVisible" title="Edit Profile">
+    <el-form :model="form">
+    <el-descriptions
+        class="margin-top"
+        :column="1"
+        :size="size"
+        border
+        style="position:relative;top:-30px"
+      >
+      <el-descriptions-item>
+        <template #label>
+          <div class="cell-item">
+            <el-icon :style="iconStyle">
+              <user />
+            </el-icon>
+            Username
+          </div>
+        </template>
+        <el-input maxlength="10" show-word-limit v-model="form.username" autocomplete="off" :placeholder="user_.username"/>
+      </el-descriptions-item>
+      <el-descriptions-item>
+        <template #label>
+          <div class="cell-item">
+            <el-icon :style="iconStyle">
+              <iphone />
+            </el-icon>
+            Telephone
+          </div>
+        </template>
+        <el-input maxlength="20" show-word-limit v-model="form.tel" autocomplete="off" :placeholder="user_.tel"/>
+      </el-descriptions-item>
+      <el-descriptions-item>
+        <template #label>
+          <div class="cell-item">
+            <el-icon :style="iconStyle">
+              <location />
+            </el-icon>
+            Place
+          </div>
+        </template>
+        <el-input maxlength="10" show-word-limit v-model="form.place" autocomplete="off" :placeholder="user_.place"/>
+      </el-descriptions-item>
+      <el-descriptions-item>
+        <template #label>
+          <div class="cell-item">
+            <el-icon :style="iconStyle">
+              <tickets />
+            </el-icon>
+            Remarks
+          </div>
+        </template>
+        <el-select v-model="form.remarks" autocomplete="off">
+          <el-option label="school" :value="1"><el-tag size="small">School</el-tag></el-option>
+          <el-option label="office" :value=0><el-tag size="small">Office</el-tag></el-option>
+        </el-select>
+      </el-descriptions-item>
+      <el-descriptions-item>
+        <template #label>
+          <div class="cell-item">
+            <el-icon :style="iconStyle">
+              <office-building />
+            </el-icon>
+            Address
+          </div>
+        </template>
+          <el-input maxlength="100" show-word-limit v-model="form.address" autocomplete="off" :placeholder="user_.address" />
+      </el-descriptions-item>
+      </el-descriptions>
+    </el-form>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">Cancel</el-button>
+        <el-button type="primary" @click="submit">
+          Confirm
+        </el-button>
+      </span>
+    </template>
+  </el-dialog>
 </template>
+
+<style scoped>
+.el-descriptions {
+  margin-top: 20px;
+}
+.cell-item {
+  display: flex;
+  align-items: center;
+}
+.margin-top {
+  margin-top: 20px;
+}
+</style>

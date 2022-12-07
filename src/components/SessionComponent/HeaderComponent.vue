@@ -1,14 +1,33 @@
 <script lang="ts" setup>
-import { ref, watch } from "vue"
+import { ref, watch, computed } from "vue"
 import axios from 'axios';
 import { ElMessage } from "element-plus";
 import { ElMessageBox } from 'element-plus'
 import { controlledComputed } from "@vueuse/shared";
+import {
+  Iphone,
+  Location,
+  OfficeBuilding,
+  Tickets,
+  User,
+  Edit,
+} from '@element-plus/icons-vue'
 const emit = defineEmits(['getSession', 'checkFriend'])
 const dialogVisible = ref(false)
 const props = defineProps(["user1_id", "session_id", "is_friend"])
 let user1_username = ref("")
 const dropdown1 = ref()
+const size = ref('large')
+const iconStyle = computed(() => {
+  const marginMap:any = {
+    large: '8px',
+    default: '6px',
+    small: '4px',
+  }
+  return {
+    marginRight: marginMap[size.value] || marginMap.default,
+  }
+})
 watch(
     ()=>props.user1_id,
     async (NewId:string)=>{
@@ -71,7 +90,23 @@ const deleteFriend = (id:string) => {
     ElMessage.error(err.response.data)
     });
 }
+let user_ = ref({
+  username: "",
+  address: "",
+  place: "",
+  tel: "",
+  remarks: 0
+})
+const dialogTableVisible = ref(false)
 let avatar_url = ref("/api/user/avatar?id="+props.user1_id)
+const getProfile = () => {
+  axios
+    .get("/api/user/profile?id="+props.user1_id)
+    .then((res)=>{
+      dialogTableVisible.value = true
+      user_.value = res.data
+    })
+}
 </script>
 <template>
 <div>
@@ -105,6 +140,7 @@ let avatar_url = ref("/api/user/avatar?id="+props.user1_id)
             <template #dropdown>
             <el-dropdown-menu>
                 <el-dropdown-item @click="dialogVisible = true">- friend</el-dropdown-item>
+                <el-dropdown-item @click="getProfile"><user style="width:15px"/> profile</el-dropdown-item>
             </el-dropdown-menu>
             </template>
           </el-dropdown>
@@ -128,4 +164,90 @@ let avatar_url = ref("/api/user/avatar?id="+props.user1_id)
     </el-col>
     </el-row>
 </div>
+
+<el-dialog v-model="dialogTableVisible">
+  <el-descriptions
+        class="margin-top"
+        title="Information"
+        :column="2"
+        :size="size"
+        border
+        style="position:relative;top:-40px"
+      >
+      <el-descriptions-item>
+        <template #label>
+          <div class="cell-item">
+            <el-icon :style="iconStyle">
+              <user />
+            </el-icon>
+            Username
+          </div>
+        </template>
+        {{user_.username}}
+      </el-descriptions-item>
+      <el-descriptions-item>
+        <template #label>
+          <div class="cell-item">
+            <el-icon :style="iconStyle">
+              <iphone />
+            </el-icon>
+            Telephone
+          </div>
+        </template>
+        {{user_.tel}}
+      </el-descriptions-item>
+      <el-descriptions-item>
+        <template #label>
+          <div class="cell-item">
+            <el-icon :style="iconStyle">
+              <location />
+            </el-icon>
+            Place
+          </div>
+        </template>
+        {{user_.place}}
+      </el-descriptions-item>
+      <el-descriptions-item>
+        <template #label>
+          <div class="cell-item">
+            <el-icon :style="iconStyle">
+              <tickets />
+            </el-icon>
+            Remarks
+          </div>
+        </template>
+        <div v-if="(user_.remarks==0)">
+          <el-tag size="small">School</el-tag>
+        </div>
+        <div v-else-if="(user_.remarks==1)">
+          <el-tag size="small">Office</el-tag>
+        </div>
+      </el-descriptions-item>
+      <el-descriptions-item>
+        <template #label>
+          <div class="cell-item">
+            <el-icon :style="iconStyle">
+              <office-building />
+            </el-icon>
+            Address
+          </div>
+        </template>
+        {{user_.address}}
+      </el-descriptions-item>
+      </el-descriptions>
+  </el-dialog>
 </template>
+
+<style scoped>
+.el-descriptions {
+  margin-top: 20px;
+}
+.cell-item {
+  display: flex;
+  align-items: center;
+}
+.margin-top {
+  margin-top: 20px;
+}
+</style>
+
