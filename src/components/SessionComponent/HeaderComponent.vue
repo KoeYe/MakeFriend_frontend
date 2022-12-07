@@ -3,6 +3,7 @@ import { ref, watch } from "vue"
 import axios from 'axios';
 import { ElMessage } from "element-plus";
 import { ElMessageBox } from 'element-plus'
+import { controlledComputed } from "@vueuse/shared";
 const emit = defineEmits(['getSession', 'checkFriend'])
 const dialogVisible = ref(false)
 const props = defineProps(["user1_id", "session_id", "is_friend"])
@@ -13,6 +14,7 @@ watch(
     async (NewId:string)=>{
         //console.log(props.user1_id)
         getUser(NewId)
+        avatar_url.value="/api/user/avatar?id="+props.user1_id
     }
 )
 const getUser = (id:string) => {
@@ -69,14 +71,20 @@ const deleteFriend = (id:string) => {
     ElMessage.error(err.response.data)
     });
 }
+let avatar_url = ref("/api/user/avatar?id="+props.user1_id)
 </script>
 <template>
 <div>
     <el-row class="mb-4" style="height: 60px; padding-top: 10px;">
-    <el-col :span="10">
-        <h2>{{user1_username}}</h2>
+    <el-col :span="1">
+      <el-avatar @click="" style="cursor: pointer"
+          :src="avatar_url"
+        />
     </el-col>
-    <el-col :span="1" :offset="13">
+    <el-col :span="10">
+      <h2 style="line-height:45px">{{user1_username}}</h2>
+    </el-col>
+    <el-col :span="1" :offset="12">
         <div v-if="(props.is_friend==0)">
           <el-dropdown ref="dropdown1" trigger="contextmenu" style="margin-right: 30px">
               <span class="el-dropdown-link">

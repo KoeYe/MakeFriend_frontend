@@ -33,7 +33,7 @@ const getMessage = () => {
     })
     setTimeout(()=>{
         getMessage()
-    },10000)
+    },50000)
 }
 getMessage()
 </script>

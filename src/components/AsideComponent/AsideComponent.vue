@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, watch, reactive } from "vue"
+import { ref, watch, reactive, computed } from "vue"
 import ModelContent from "../ModelComponent/ModelComponent.vue"
 import axios from "axios";
 import { ElMessage } from "element-plus";
@@ -46,10 +46,19 @@ loadFriends(id)
 
 let users = ref([{
   id: "",
-  username: ""
+  username: "",
+  avatar: "",
+  last_message: {
+    content: "",
+    date: "",
+    user: "",
+  },
 }])
+let select = ref(users.value[0].id)
+watch(select, async (newSelect:string, oldSelect:string) => {
 
-const setSession = (id:String) => {
+});
+const setSession = (id:string) => {
   //ElMessage.info("Setting session...")
   //console.log(id)
   axios
@@ -60,6 +69,7 @@ const setSession = (id:String) => {
     .then((res)=>{
       //console.log(res.data)
       router.replace({name: "session", params: {session_id: res.data.session_id}})
+      select.value = id;
     })
     .catch((err) => {});
 }
@@ -69,7 +79,7 @@ const onModel = () => {
 }
 </script>
 <template>
-    <el-row class="mb-4" style="height: 60px; padding-top: 10px;">
+<el-row class="mb-4" style="height: 60px; padding-top: 10px;">
     <el-col :span="4" style="padding: 0">
     <el-button
         style="height: 40px"
@@ -90,7 +100,52 @@ const onModel = () => {
           <el-table-column prop="username" style="width: 100%"/>
       </el-table> -->
       <div v-for="user of users">
-          <el-card style="margin:10px" shadow="hover" @click="setSession(user.id)">{{user.username}} </el-card>
+        <div v-if="(select!=user.id)">
+          <el-card style="margin:10px;" shadow="hover" @click="setSession(user.id)">
+            <el-row>
+              <el-col :span="5">
+                <el-avatar
+                  :src="user.avatar"
+                />
+              </el-col>
+              <el-col :span="12">
+                <el-row><h3>{{user.username}}</h3></el-row>
+                <div v-if="(user.last_message.user==id)">
+                  <el-row><div style="color:dodgerblue">You:</div>{{user.last_message.content}}</el-row>
+                </div>
+                <div v-else-if="(user.last_message.user!=id)">
+                  <el-row>{{user.last_message.content}}</el-row>
+                </div>
+              </el-col>
+              <el-col :span="5">
+                <el-row>{{user.last_message.date}}</el-row>
+              </el-col>
+            </el-row>
+          </el-card>
+        </div>
+        <div v-else-if="(select==user.id)">
+          <el-card style="margin:10px; background-color: dodgerblue;color:white;" shadow="hover" @click="setSession(user.id)">
+            <el-row>
+              <el-col :span="5">
+                <el-avatar
+                  :src="user.avatar"
+                />
+              </el-col>
+              <el-col :span="12">
+                <el-row><h3>{{user.username}}</h3></el-row>
+                <div v-if="(user.last_message.user==id)">
+                  <el-row><div>You:</div>{{user.last_message.content}}</el-row>
+                </div>
+                <div v-else-if="(user.last_message.user!=id)">
+                  <el-row>{{user.last_message.content}}</el-row>
+                </div>
+              </el-col>
+              <el-col :span="5">
+                <el-row>{{user.last_message.date}}</el-row>
+              </el-col>
+            </el-row>
+          </el-card>
+        </div>
       </div>
     </div>
 </div>
