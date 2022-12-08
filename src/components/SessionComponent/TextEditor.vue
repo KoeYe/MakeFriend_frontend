@@ -11,7 +11,7 @@
     >
     <el-form-item label=" " prop="text">
         <el-col :span="22">
-            <el-input v-model="form.text" placeholder="Hello..." > </el-input>
+            <el-input onkeypress="if(event.keyCode == 13) return false;" @keyup.enter="onSend(formRef)" v-model="form.text" placeholder="Hello..." > </el-input>
         </el-col>
         <el-col :span="2">
             <el-button
@@ -20,6 +20,9 @@
                 @click="onSend(formRef)"
             >
                 Send
+                <div style="position:relative;top:-1px;margin:5px; width:20px; height:20px; background-color:aliceblue; border-radius: 20%;color:dimgrey; text-align: center;vertical-align: middle;box-shadow: 1px 1px 1px 1px;">
+                    <svg style="height:15px;margin-top:2.5px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 20 20"><g fill="none"><path d="M4.641 12.5l2.873 2.704a.75.75 0 0 1-1.028 1.092l-4.25-4a.75.75 0 0 1 0-1.092l4.25-4a.75.75 0 1 1 1.028 1.092L4.641 11H14.75a1.75 1.75 0 0 0 1.75-1.75v-4.5a.75.75 0 0 1 1.5 0v4.5a3.25 3.25 0 0 1-3.25 3.25H4.641z" fill="currentColor"></path></g></svg>
+                </div>
             </el-button>
         </el-col>
     </el-form-item>
@@ -73,9 +76,11 @@ const onSend = (formEl: FormInstance | undefined)=>{
 
 const formRef = ref<FormInstance>()
 
+
 const rules = reactive({
     text: [
-        {max: 100, message: "The maximum number of characters is 100", trigger: "blur"}
+        {max: 100, message: "The maximum number of characters is 100", trigger: "blur"},
+        {required:true, message: "The content can not be empty", trigger: "blur"}
     ]
 })
 const form = reactive({

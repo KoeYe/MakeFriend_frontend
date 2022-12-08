@@ -138,6 +138,7 @@ const submit = () => {
         title="Information"
         :column="1"
         :size="size"
+        style="width:100%"
         border
       >
       <el-descriptions-item>
@@ -182,10 +183,10 @@ const submit = () => {
             Remarks
           </div>
         </template>
-        <div v-if="(user_.remarks=='0')">
+        <div v-if="(user_.remarks===0)">
           <el-tag size="small">School</el-tag>
         </div>
-        <div v-else-if="(user_.remarks=='1')">
+        <div v-else-if="(user_.remarks===1)">
           <el-tag size="small">Office</el-tag>
         </div>
       </el-descriptions-item>

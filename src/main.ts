@@ -9,6 +9,7 @@ import VueSocketIO from 'vue-socket.io'
 import './assets/main.css'
 import axios from 'axios';
 import ArcoVue from '@arco-design/web-vue';
+import naive from 'naive-ui'
 // axios.defaults.withCredentials=true;
 
 const app = createApp(App)
@@ -16,6 +17,7 @@ const app = createApp(App)
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
     app.component(key, component)
 }
+app.use(naive)
 app.use(ArcoVue);
 app.use(router)
 app.use(ElementPlus)

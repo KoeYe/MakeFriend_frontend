@@ -4,6 +4,7 @@ import ModelContent from "../ModelComponent/ModelComponent.vue"
 import axios from "axios";
 import { ElMessage } from "element-plus";
 import { useRouter } from "vue-router";
+
 const drawer = ref(false);
 const username = sessionStorage.getItem("username");
 const id = sessionStorage.getItem("id");
@@ -12,6 +13,7 @@ const search_content= ref("")
 const router = useRouter()
 //const emit = defineEmits(['changeSession'])
 const title = ref("Friends:")
+
 watch(search_content, async (newSearch:string, oldSearch:string) => {
   if(newSearch.length!=0){
     axios
@@ -110,10 +112,19 @@ const onModel = () => {
               <el-col :span="12">
                 <el-row><h3>{{user.username}}</h3></el-row>
                 <div v-if="(user.last_message.user==id)">
-                  <el-row><div style="color:dodgerblue">You:</div>{{user.last_message.content}}</el-row>
+                  <el-row>
+                    <el-col style="color:dodgerblue" :span="7">You:</el-col>
+                    <el-col :span="17">
+                      <n-ellipsis style="max-width: 50%">
+                        {{user.last_message.content}}
+                      </n-ellipsis>
+                    </el-col>
+                  </el-row>
                 </div>
                 <div v-else-if="(user.last_message.user!=id)">
-                  <el-row>{{user.last_message.content}}</el-row>
+                  <n-ellipsis style="max-width: 50%">
+                  {{user.last_message.content}}
+                  </n-ellipsis>
                 </div>
               </el-col>
               <el-col :span="5">
@@ -133,10 +144,19 @@ const onModel = () => {
               <el-col :span="12">
                 <el-row><h3>{{user.username}}</h3></el-row>
                 <div v-if="(user.last_message.user==id)">
-                  <el-row><div>You:</div>{{user.last_message.content}}</el-row>
+                  <el-row>
+                    <el-col :span="7">You:</el-col>
+                    <el-col :span="17">
+                      <n-ellipsis style="max-width: 50%">
+                        {{user.last_message.content}}
+                      </n-ellipsis>
+                    </el-col>
+                  </el-row>
                 </div>
                 <div v-else-if="(user.last_message.user!=id)">
-                  <el-row>{{user.last_message.content}}</el-row>
+                  <n-ellipsis style="max-width: 50%">
+                    {{user.last_message.content}}
+                  </n-ellipsis>
                 </div>
               </el-col>
               <el-col :span="5">

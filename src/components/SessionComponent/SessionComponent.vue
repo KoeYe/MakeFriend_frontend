@@ -81,5 +81,7 @@ checkFriends(user1_id.value)
   background-size: cover;
   background-repeat: no-repeat;
   height: calc(100vh - 130px);
+  padding: 0px;
+  overflow-y: hidden;
 }
 </style>
