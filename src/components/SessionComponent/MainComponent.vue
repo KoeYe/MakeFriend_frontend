@@ -6,7 +6,16 @@
             <div v-if="(mess.user_id==user_id)">
                 <el-row justify="end">
                     <el-card body-style="padding-top:5px; padding-bottom:5px" style="hover{box-shadow: 2px 2px 2px 2px;}; border-radius: 20px; margin:8px; text-align: right; width:fit-content;background-color: rgb(239, 253, 222);" shadow="hover">
-                        <el-row><h4>{{mess.content}}</h4></el-row>
+                        <div v-if="(mess.type=='text')">
+                            <el-row><h4>{{mess.content}}</h4></el-row>
+                        </div>
+                        <div v-else-if="(mess.type=='image')">
+                            <el-row>
+                                <a-image :src="mess.url" style="margin-top:15px;border-radius:25px;">
+                                </a-image>
+                            </el-row>
+                            <el-row justify="end"><h4>{{mess.content}}</h4></el-row>
+                        </div>
                         <el-row justify="end" style="font-size:xx-small;margin:0px;color:green">{{(mess.hour<10?'0'+mess.hour:mess.hour)}}:{{(mess.minute<10?'0'+mess.minute:mess.minute)}}</el-row>
                     </el-card>
                 </el-row>
@@ -14,8 +23,17 @@
             <div v-if="(mess.user_id!=user_id)">
                 <el-row justify="start">
                     <el-card body-style="padding-top:5px; padding-bottom:5px" style="hover{box-shadow: 2px 2px 2px 2px;}; border-radius: 20px;margin:8px; text-align: left; width:fit-content;" shadow="hover">
-                        <el-row><h4>{{mess.content}}</h4></el-row>
-                        <el-row justify="end" style="font-size:xx-small;margin:0px;color:gray">{{(mess.hour<10?'0'+mess.hour:mess.hour)}}:{{(mess.minute<10?'0'+mess.minute:mess.minute)}}</el-row>
+                        <div v-if="(mess.type=='text')">
+                            <el-row><h4>{{mess.content}}</h4></el-row>
+                        </div>
+                        <div v-else-if="(mess.type=='image')">
+                            <el-row>
+                                <a-image :src="mess.url" style="margin-top:15px;border-radius:25px;">
+                                </a-image>
+                            </el-row>
+                            <el-row><h4>{{mess.content}}</h4></el-row>
+                        </div>
+                        <el-row justify="start" style="font-size:xx-small;margin:0px;color:gray">{{(mess.hour<10?'0'+mess.hour:mess.hour)}}:{{(mess.minute<10?'0'+mess.minute:mess.minute)}}</el-row>
                     </el-card>
                 </el-row>
             </div>
@@ -32,7 +50,7 @@ import { useRoute } from "vue-router"
 const innerRef = ref<HTMLDivElement>()
 let scrollbarRef = ref<InstanceType<typeof ElScrollbar>>()
 const inputSlider = () => {
-    console.log("setting scroll")
+    //console.log("setting scroll")
     scrollbarRef.value?.setScrollTop(innerRef.value!.clientHeight-380)
 }
 let props = defineProps(["session_id"])
@@ -43,13 +61,13 @@ const getMessage = () => {
     get("/api/session/message?session_id="+props.session_id)
     .then((res)=>{
         message.value = res.data.messages;
-        console.log(message.value)
-        console.log(message.value[message.value.length-1].content)
+        //console.log(message.value)
+        //console.log(message.value[message.value.length-1].content)
         //console.log(message.value.length)
     })
     setTimeout(()=>{
         getMessage()
-    },1000)
+    },50000)
 }
 getMessage()
 setTimeout(()=>{inputSlider()},200)

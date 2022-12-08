@@ -5,3 +5,9 @@ import { RouterView } from "vue-router";
 <template>
   <RouterView />
 </template>
+
+<style>
+html{
+  overflow-y: hidden;
+}
+</style>

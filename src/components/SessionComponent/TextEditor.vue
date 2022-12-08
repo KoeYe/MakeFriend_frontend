@@ -1,22 +1,42 @@
 <template>
     <div>
-    <el-form
-        hide-required-asterisk
-        ref="formRef"
-        :model="form"
-        label-width="120px"
-        label-position="top"
-        size="large"
-        :rules="rules"
-    >
-    <el-form-item label=" " prop="text">
-        <el-col :span="22">
-            <el-input onkeypress="if(event.keyCode == 13) return false;" @keyup.enter="onSend(formRef)" v-model="form.text" placeholder="Hello..." > </el-input>
+        <el-row style="margin:10px">
+        <el-col :span="1">
+            <el-upload
+                ref="uploadRef"
+                class="upload"
+                action="/api/session/upload"
+                :headers="headers"
+                :auto-upload="false"
+                :show-file-list="false"
+                :before-upload="beforeUpload"
+                :on-change="handleUploadChange"
+                :limit=1
+                :file-list="fileList_"
+            >
+                <template #trigger>
+                    <Paperclip @click="selectAttach" style="height: 27px;width: 27px;margin-left:15px;margin-top:0px;position:relative;top:7px;cursor:pointer"/>
+                </template>
+            </el-upload>
         </el-col>
-        <el-col :span="2">
+        <el-col :span="21" style="margin-right:10px">
+            <el-form
+                style="width: 100%;"
+                hide-required-asterisk
+                ref="formRef"
+                :model="form"
+                size="large"
+                :rules="rules"
+            >
+                <el-form-item prop="text">
+                        <el-input onkeypress="if(event.keyCode == 13) return false;" @keyup.enter="onSend(formRef)" v-model="form.text" placeholder="Hello..." > </el-input>
+                </el-form-item>
+            </el-form>
+        </el-col>
+        <el-col :span="1.5">
             <el-button
                 type="primary"
-                style="width: 100%"
+                style="width: 100%;height:66%"
                 @click="onSend(formRef)"
             >
                 Send
@@ -25,14 +45,13 @@
                 </div>
             </el-button>
         </el-col>
-    </el-form-item>
-    </el-form>
+    </el-row>
 </div>
 </template>
 
 <script lang="ts" setup>
 import { reactive, ref,getCurrentInstance, onMounted, onBeforeUnmount } from "vue";
-import { ElButton, ElCol, ElForm, ElFormItem, ElInput, ElMessage, FormInstance } from "element-plus";
+import { ElButton, ElCol, ElForm, ElFormItem, ElInput, ElMessage, FormInstance,UploadInstance } from "element-plus";
 import { io, Socket } from "socket.io-client"
 import axios from "axios";
 // import { DefaultEventsMap } from "socket.io-client/build/typed-events";
@@ -46,12 +65,70 @@ import axios from "axios";
 //     socket.on('disconnect', () => console.log('disconnect: websocket 连接关闭！'))
 //     socket.close();
 // });
-const props = defineProps(["session_id", "user2_id"])
-const onSend = (formEl: FormInstance | undefined)=>{
-    if (!formEl) {
-        return
+let fileList_= ref<File[]>([])
+const selectAttach = () => {
+    console.log("selectAttach")
+
+}
+const handleUploadChange = (file:any, fileList: File[]) => {
+    console.log(file)
+    console.log(fileList)
+    if (file.status === "done") {
+        ElMessage.success(`${file.name} file uploaded successfully.`);
+        hasFile = false;
+    } else if (file.status === 'error') {
+        ElMessage.error(`${file.name} file upload failed.`);
+        hasFile = false;
+    } else if (file.status === 'ready') {
+        //console.log(uploadRef.value!.UploadList[0])
+        console.log('ready')
+        fileList_.value.push(file)
+        hasFile = true;
+    } else if (file.status === 'remove') {
+        console.log('remove')
+        fileList_.value = []
+        hasFile = false;
     }
-    formEl.validate((valid: boolean)=>{
+}
+let hasFile = false
+const uploadRef = ref<UploadInstance>()
+const props = defineProps(["session_id", "user2_id"])
+const beforeUpload = (file: File) => {
+    const isLt2M = file.size / 1024 / 1024 < 4;
+    if (!isLt2M) {
+        ElMessage.error('Image must smaller than 4MB!');
+    }
+    return isLt2M;
+}
+let headers = ref<Headers | Record<string, any>>()
+const onSend = (formEl: FormInstance | undefined)=>{
+    if (hasFile) {
+        console.log("hasFile")
+        console.log(fileList_.value)
+        //console.log(uploadRef.value!.uploadFiles)
+        axios
+        .post("/api/session/update_file_content",{
+                session_id: props.session_id,
+                user_id: sessionStorage.getItem("id"),
+                content: form.text,
+            })
+        .then((res)=>{
+            ElMessage.info("Sending...")
+            console.log(res.data)
+            headers.value = {"id":res.data.id}
+            uploadRef.value!.submit()
+            ElMessage.success("Send successfully!")
+        })
+        .finally(()=>{
+            form.text = ""
+            hasFile = false;
+        });
+    } else {
+        console.log("noFile")
+        if (!formEl) {
+            return
+        }
+        formEl.validate((valid: boolean)=>{
         if (valid) {
             //socket.emit('send', form.text);
             axios
@@ -62,25 +139,27 @@ const onSend = (formEl: FormInstance | undefined)=>{
             })
             .then((res)=>{
                 ElMessage.success(res.data)
-                form.text = ""
             })
             .catch((err)=>{
                 ElMessage.error(err)
+            })
+            .finally(()=>{
+                form.text = ""
+                hasFile = false;
             });
         }
         else {
             ElMessage.error("Invalid message!");
         }
     })
+    }
 }
 
 const formRef = ref<FormInstance>()
 
-
 const rules = reactive({
     text: [
         {max: 100, message: "The maximum number of characters is 100", trigger: "blur"},
-        {required:true, message: "The content can not be empty", trigger: "blur"}
     ]
 })
 const form = reactive({
