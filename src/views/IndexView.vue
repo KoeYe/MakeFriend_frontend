@@ -10,15 +10,15 @@ const username = sessionStorage.getItem("username");
 </script>
 
 <template>
-  <el-container class="base-container">
+  <a-layout class="base-container">
   <!--侧边栏-->
-    <el-aside :span="4">
+    <a-layout-sider :resize-directions="['right']" :span="4">
       <Aside />
-    </el-aside>
-    <el-container :span="20">
+    </a-layout-sider>
+    <a-layout :span="20">
       <router-view />
-    </el-container>
-  </el-container>
+    </a-layout>
+  </a-layout>
 
 </template>
 
@@ -30,9 +30,12 @@ const username = sessionStorage.getItem("username");
   width:100%
 }
 
-.el-aside{
+.arco-layout-sider{
+  max-width: 25%;
+  min-width: 20%;
   padding-left: 10px;
   padding-right: 10px;
   background-color: white;
+  height: 100vh;
 }
 </style>

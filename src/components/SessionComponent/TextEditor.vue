@@ -2,6 +2,14 @@
     <div>
         <el-row style="margin:10px">
         <el-col :span="1">
+            <icon-face-smile-fill
+                @click="showEmoji"
+                style="height: 27px;width: 27px;margin:5px;margin-top:0px;position:relative;top:7px;cursor:pointer"
+            />
+        </el-col>
+        <el-col :span="1">
+            <div v-if="hasFile">
+            <a-badge :text="fileList_[0].name" class="item">
             <el-upload
                 ref="uploadRef"
                 class="upload"
@@ -16,11 +24,38 @@
                 :file-list="fileList_"
             >
                 <template #trigger>
-                    <Paperclip @click="selectAttach" style="height: 27px;width: 27px;margin-left:15px;margin-top:0px;position:relative;top:7px;cursor:pointer"/>
+                    <Paperclip
+                        @click="selectAttach"
+                        style="height: 27px;width: 27px;margin:5px;margin-top:0px;position:relative;top:7px;cursor:pointer"
+                    />
                 </template>
             </el-upload>
+            </a-badge>
+        </div>
+        <div v-else>
+            <el-upload
+                ref="uploadRef"
+                class="upload"
+                action="/api/session/upload"
+                :headers="headers"
+                :auto-upload="false"
+                :show-file-list="false"
+                :before-upload="beforeUpload"
+                :on-change="handleUploadChange"
+                :on-success="handleUploadSuccess"
+                :limit=1
+                :file-list="fileList_"
+            >
+                <template #trigger>
+                    <Paperclip
+                        @click="selectAttach"
+                        style="height: 27px;width: 27px;margin:5px;margin-top:0px;position:relative;top:7px;cursor:pointer"
+                    />
+                </template>
+            </el-upload>
+        </div>
         </el-col>
-        <el-col :span="21" style="margin-right:10px">
+        <el-col :span="19" style="margin-right:10px">
             <el-form
                 style="width: 100%;"
                 hide-required-asterisk
@@ -76,22 +111,22 @@ const handleUploadChange = (file:any, fileList: File[]) => {
     console.log(fileList)
     if (file.status === "done") {
         ElMessage.success(`${file.name} file uploaded successfully.`);
-        hasFile = false;
+        hasFile.value = false;
     } else if (file.status === 'error') {
         ElMessage.error(`${file.name} file upload failed.`);
-        hasFile = false;
+        hasFile.value = false;
     } else if (file.status === 'ready') {
         //console.log(uploadRef.value!.UploadList[0])
         console.log('ready')
         fileList_.value.push(file)
-        hasFile = true;
+        hasFile.value = true;
     } else if (file.status === 'remove') {
         console.log('remove')
         fileList_.value = []
-        hasFile = false;
+        hasFile.value = false;
     }
 }
-let hasFile = false
+let hasFile = ref(false)
 const uploadRef = ref<UploadInstance>()
 const props = defineProps(["session_id", "user2_id"])
 const beforeUpload = (file: File) => {
@@ -121,7 +156,7 @@ const onSend = (formEl: FormInstance | undefined)=>{
         })
         .finally(()=>{
             form.text = ""
-            hasFile = false;
+            hasFile.value = false;
         });
     } else {
         console.log("noFile")
@@ -144,7 +179,7 @@ const onSend = (formEl: FormInstance | undefined)=>{
             })
             .finally(()=>{
                 form.text = ""
-                hasFile = false;
+                hasFile.value = false;
             });
         }
         else {
@@ -157,7 +192,7 @@ const handleUploadSuccess = (res: any, file: any) => {
     console.log(res)
     console.log(file)
     ElMessage.success(`${file.name} file uploaded successfully.`);
-    hasFile = false;
+    hasFile.value = false;
 }
 const formRef = ref<FormInstance>()
 
@@ -170,5 +205,9 @@ const form = reactive({
     text: "",
 })
 </script>
+
+<style scoped>
+
+</style>
 
 

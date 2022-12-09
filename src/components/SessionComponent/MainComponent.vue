@@ -1,6 +1,6 @@
 <template>
 <div style="margin:0px">
-    <el-scrollbar ref="scrollbarRef" always style="height:calc(100vh - 130px);margin:0px">
+    <el-scrollbar ref="scrollbarRef" always style="height:calc(100vh - 120px);margin:0px">
         <div ref="innerRef">
         <div v-for="mess of message">
             <div v-if="(mess.user_id==user_id)">
@@ -23,22 +23,28 @@
                         shadow="hover"
                     >
                         <div v-if="(mess.type=='text')">
-                            <el-row><h4>{{mess.content}}</h4></el-row>
+                            <el-row v-if="mess.content.length>=1"><h4><a-typography-paragraph copyable>{{mess.content}}</a-typography-paragraph></h4></el-row>
+                            <el-row v-else><h4>{{mess.content}}</h4></el-row>
                         </div>
                         <div v-else-if="(mess.type=='image')">
                             <el-row>
                                 <a-image :src="mess.url" style="margin-top:15px;border-radius:25px;">
                                 </a-image>
                             </el-row>
-                            <el-row justify="end"><h4>{{mess.content}}</h4></el-row>
+                            <el-row justify="end" v-if="mess.content.length>=1"><h4><a-typography-paragraph copyable>{{mess.content}}</a-typography-paragraph></h4></el-row>
+                            <el-row  justify="end" v-else><h4>{{mess.content}}</h4></el-row>
                         </div>
                         <div v-else-if="(mess.type=='file')">
+                            <div class="file" style="cursor: pointer;" @click="download(mess.url, mess.filename)">
                             <el-row justify="center">
-                                <el-icon size="xxx-large" style="cursor:pointer" @click="download(mess.url, mess.filename)"><Document /></el-icon>
+                                <el-icon size="xxx-large"><Document /></el-icon>
                             </el-row>
                             <el-row>
-                                <h4>{{mess.filename}}</h4>
+                                <h5>{{mess.filename}}</h5>
                             </el-row>
+                            </div>
+                            <el-row justify="end" v-if="mess.content.length>=1"><h4><a-typography-paragraph copyable>{{mess.content}}</a-typography-paragraph></h4></el-row>
+                            <el-row justify="end" v-else><h4>{{mess.content}}</h4></el-row>
                         </div>
                         <el-row justify="end" style="font-size:xx-small;margin:0px;color:green">{{(mess.hour<10?'0'+mess.hour:mess.hour)}}:{{(mess.minute<10?'0'+mess.minute:mess.minute)}}</el-row>
                     </el-card>
@@ -56,22 +62,28 @@
                         shadow="hover"
                     >
                         <div v-if="(mess.type=='text')">
-                            <el-row><h4>{{mess.content}}</h4></el-row>
+                            <el-row v-if="mess.content.length>=1"><h4><a-typography-paragraph copyable>{{mess.content}}</a-typography-paragraph></h4></el-row>
+                            <el-row v-else><h4>{{mess.content}}</h4></el-row>
                         </div>
                         <div v-else-if="(mess.type=='image')">
                             <el-row>
                                 <a-image :src="mess.url" style="margin-top:15px;border-radius:25px;">
                                 </a-image>
                             </el-row>
-                            <el-row><h4>{{mess.content}}</h4></el-row>
+                            <el-row v-if="mess.content.length>=1"><h4><a-typography-paragraph  copyable>{{mess.content}}</a-typography-paragraph></h4></el-row>
+                            <el-row v-else><h4>{{mess.content}}</h4></el-row>
                         </div>
                         <div v-else-if="(mess.type=='file')">
+                            <div class="file" style="cursor:pointer"  @click="download(mess.url, mess.filename)">
                             <el-row justify="center">
-                                <el-icon size="xxx-large" style="cursor:pointer" @click="download(mess.url, mess.filename)"><Document /></el-icon>
+                                <el-icon size="xxx-large"><Document /></el-icon>
                             </el-row>
                             <el-row>
-                                <h4>{{mess.filename}}</h4>
+                                <h5>{{mess.filename}}</h5>
                             </el-row>
+                            </div>
+                            <el-row v-if="mess.content.length>=1"><h4><a-typography-paragraph copyable>{{mess.content}}</a-typography-paragraph></h4></el-row>
+                            <el-row v-else><h4>{{mess.content}}</h4></el-row>
                         </div>
                         <el-row justify="start" style="font-size:xx-small;margin:0px;color:gray">{{(mess.hour<10?'0'+mess.hour:mess.hour)}}:{{(mess.minute<10?'0'+mess.minute:mess.minute)}}</el-row>
                     </el-card>
@@ -135,7 +147,7 @@ const mouseenter = (id:string) => {
     visibile_id.value = id
 }
 const mouseleave = (id:string) => {
-    setTimeout(()=>{visibile_id.value = ""},5000)
+    setTimeout(()=>{visibile_id.value = ""},10000)
 }
 const visibile = (id:string) => {
     if(visibile_id.value === id){
@@ -181,5 +193,9 @@ const download = (url: string | URL, filename: string) => {
 }
 .del-btn:hover{
     color: black;
+}
+
+.file:hover{
+    color: rgb(131,176,240);
 }
 </style>

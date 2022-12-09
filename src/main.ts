@@ -10,6 +10,7 @@ import './assets/main.css'
 import axios from 'axios';
 import ArcoVue from '@arco-design/web-vue';
 import naive from 'naive-ui'
+import ArcoVueIcon from '@arco-design/web-vue/es/icon';
 // axios.defaults.withCredentials=true;
 
 const app = createApp(App)
@@ -17,6 +18,7 @@ const app = createApp(App)
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
     app.component(key, component)
 }
+app.use(ArcoVueIcon);
 app.use(naive)
 app.use(ArcoVue);
 app.use(router)

@@ -43,29 +43,29 @@ getSession(route.params.session_id)
 checkFriends(user1_id.value)
 </script>
 <template>
-<el-container>
-  <el-header>
+<a-layout>
+  <a-layout-header>
     <Header :user1_id="user1_id" :session_id="route.params.session_id" :is_friend="is_friend" @checkFriend="checkFriends(user1_id)"/>
     <!-- {{user1_id.value}} -->
-  </el-header>
-  <el-main>
+  </a-layout-header>
+  <a-layout-content>
     <Main :session_id="route.params.session_id"/>
-  </el-main>
-  <el-footer>
+  </a-layout-content>
+  <a-layout-footer>
     <TextEditor :user2_id="user2_id" :session_id="route.params.session_id"/>
-  </el-footer>
-</el-container>
+  </a-layout-footer>
+</a-layout>
 </template>
 
 <style scoped>
-.el-header{
+.arco-layout-header{
   background-color:white;
   height: 60px;
   border-style: solid;
   border-width: 0 0 1px 1px;
   border-color: rgba(97, 97, 97, 0.1);
 }
-.el-footer{
+.arco-layout-footer{
   background-color:white;
   height: 60px;
   border-style: solid;
@@ -73,15 +73,20 @@ checkFriends(user1_id.value)
   border-color: rgba(97, 97, 97, 0.1);
 }
 
-.el-main{
+.arco-layout-content{
   border-style: solid;
   border-width: 1px;
   border-color: rgba(97, 97, 97, 0.1);
   background-image: url(@/assets/bg.png);
   background-size: cover;
   background-repeat: no-repeat;
-  height: calc(100vh - 130px);
+  height: calc(100vh - 120px);
   padding: 0px;
   overflow-y: hidden;
+}
+
+.arco-layout{
+  overflow-y: hidden;
+  height: 100vh;
 }
 </style>

@@ -127,7 +127,7 @@ const getProfile = () => {
               </span>
               <template #dropdown>
               <el-dropdown-menu>
-                  <el-dropdown-item @click="addFriend(props.user1_id)">+ friend</el-dropdown-item>
+                  <el-dropdown-item @click="addFriend(props.user1_id)"><icon-user-add /> friend</el-dropdown-item>
               </el-dropdown-menu>
               </template>
           </el-dropdown>
@@ -140,7 +140,8 @@ const getProfile = () => {
             <template #dropdown>
             <el-dropdown-menu>
                 <el-dropdown-item @click="dialogVisible = true">- friend</el-dropdown-item>
-                <el-dropdown-item @click="getProfile"><user style="width:15px"/> profile</el-dropdown-item>
+                <el-dropdown-item @click="getProfile"><icon-user /> profile</el-dropdown-item>
+                <el-dropdown-item @click="createGroup"><icon-user-group /> group</el-dropdown-item>
             </el-dropdown-menu>
             </template>
           </el-dropdown>
