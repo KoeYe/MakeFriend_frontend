@@ -11,6 +11,7 @@
                 :show-file-list="false"
                 :before-upload="beforeUpload"
                 :on-change="handleUploadChange"
+                :on-success="handleUploadSuccess"
                 :limit=1
                 :file-list="fileList_"
             >
@@ -117,7 +118,6 @@ const onSend = (formEl: FormInstance | undefined)=>{
             console.log(res.data)
             headers.value = {"id":res.data.id}
             uploadRef.value!.submit()
-            ElMessage.success("Send successfully!")
         })
         .finally(()=>{
             form.text = ""
@@ -130,7 +130,6 @@ const onSend = (formEl: FormInstance | undefined)=>{
         }
         formEl.validate((valid: boolean)=>{
         if (valid) {
-            //socket.emit('send', form.text);
             axios
             .post("/api/session/message",{
                 session_id: props.session_id,
@@ -154,7 +153,12 @@ const onSend = (formEl: FormInstance | undefined)=>{
     })
     }
 }
-
+const handleUploadSuccess = (res: any, file: any) => {
+    console.log(res)
+    console.log(file)
+    ElMessage.success(`${file.name} file uploaded successfully.`);
+    hasFile = false;
+}
 const formRef = ref<FormInstance>()
 
 const rules = reactive({

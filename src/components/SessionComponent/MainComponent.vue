@@ -5,7 +5,7 @@
         <div v-for="mess of message">
             <div v-if="(mess.user_id==user_id)">
                 <el-row  justify="end">
-                    <a-space align='end'>
+                    <a-space align='end' size='mini'>
                     <div v-show="visibile(mess.id)==1"
                         @mouseenter="mouseenter(mess.id)"
                         @mouseleave="mouseleave(mess.id)">
@@ -19,7 +19,7 @@
                         @mouseenter="mouseenter(mess.id)"
                         @mouseleave="mouseleave(mess.id)"
                         body-style="padding-top:5px; padding-bottom:5px"
-                        style="hover{box-shadow: 2px 2px 2px 2px;}; border-radius: 20px; margin:8px; text-align: right; width:fit-content;background-color: rgb(239, 253, 222);"
+                        style="hover{box-shadow: 2px 2px 2px 2px;}; margin:0px;border-radius: 20px; margin:8px; text-align: right; width:fit-content;background-color: rgb(239, 253, 222);"
                         shadow="hover"
                     >
                         <div v-if="(mess.type=='text')">
@@ -32,14 +32,29 @@
                             </el-row>
                             <el-row justify="end"><h4>{{mess.content}}</h4></el-row>
                         </div>
+                        <div v-else-if="(mess.type=='file')">
+                            <el-row justify="center">
+                                <el-icon size="xxx-large" style="cursor:pointer" @click="download(mess.url, mess.filename)"><Document /></el-icon>
+                            </el-row>
+                            <el-row>
+                                <h4>{{mess.filename}}</h4>
+                            </el-row>
+                        </div>
                         <el-row justify="end" style="font-size:xx-small;margin:0px;color:green">{{(mess.hour<10?'0'+mess.hour:mess.hour)}}:{{(mess.minute<10?'0'+mess.minute:mess.minute)}}</el-row>
                     </el-card>
-                </a-space>
-            </el-row>
+                    </a-space>
+                </el-row>
             </div>
             <div v-if="(mess.user_id!=user_id)">
                 <el-row justify="start">
-                    <el-card body-style="padding-top:5px; padding-bottom:5px" style="hover{box-shadow: 2px 2px 2px 2px;}; border-radius: 20px;margin:8px; text-align: left; width:fit-content;" shadow="hover">
+                    <a-space align='end' size='mini'>
+                    <el-card
+                        @mouseenter="mouseenter(mess.id)"
+                        @mouseleave="mouseleave(mess.id)"
+                        body-style="padding-top:5px; padding-bottom:5px"
+                        style="hover{box-shadow: 2px 2px 2px 2px;}; border-radius: 20px; margin:8px; text-align: right; width:fit-content;"
+                        shadow="hover"
+                    >
                         <div v-if="(mess.type=='text')">
                             <el-row><h4>{{mess.content}}</h4></el-row>
                         </div>
@@ -50,8 +65,26 @@
                             </el-row>
                             <el-row><h4>{{mess.content}}</h4></el-row>
                         </div>
+                        <div v-else-if="(mess.type=='file')">
+                            <el-row justify="center">
+                                <el-icon size="xxx-large" style="cursor:pointer" @click="download(mess.url, mess.filename)"><Document /></el-icon>
+                            </el-row>
+                            <el-row>
+                                <h4>{{mess.filename}}</h4>
+                            </el-row>
+                        </div>
                         <el-row justify="start" style="font-size:xx-small;margin:0px;color:gray">{{(mess.hour<10?'0'+mess.hour:mess.hour)}}:{{(mess.minute<10?'0'+mess.minute:mess.minute)}}</el-row>
                     </el-card>
+                    <div v-show="visibile(mess.id)==1"
+                        @mouseenter="mouseenter(mess.id)"
+                        @mouseleave="mouseleave(mess.id)">
+                    <a-popconfirm content="Are you sure you want to delete the message?" position="right"
+                                    ok-text="Yes" cancel-text="No" @ok="deleteMessage(mess.id)"
+                                    >
+                        <el-button :icon="Delete" circle class="del-btn"/>
+                    </a-popconfirm>
+                    </div>
+                    </a-space>
                 </el-row>
             </div>
         </div>
@@ -69,7 +102,7 @@ import {
   Star,
 } from '@element-plus/icons-vue'
 import axios from "axios";
-import { messageType,ElScrollbar, ElMessage } from "element-plus";
+import { messageType,ElScrollbar, ElMessage, linkEmits } from "element-plus";
 import { ref, watch, onMounted } from "vue"
 import { useRoute } from "vue-router"
 const innerRef = ref<HTMLDivElement>()
@@ -102,7 +135,7 @@ const mouseenter = (id:string) => {
     visibile_id.value = id
 }
 const mouseleave = (id:string) => {
-    setTimeout(()=>{visibile_id.value = ""},3000)
+    setTimeout(()=>{visibile_id.value = ""},5000)
 }
 const visibile = (id:string) => {
     if(visibile_id.value === id){
@@ -119,6 +152,23 @@ const deleteMessage = (id:any) => {
         ElMessage.success(res.data)
         //getMessage()
     })
+}
+const download = (url: string | URL, filename: string) => {
+    console.log(filename)
+    let xhr = new XMLHttpRequest();
+    xhr.open("GET", url, true);
+    xhr.responseType = "blob";
+    xhr.onload = function () {
+        const url = window.URL.createObjectURL(this.response)
+        const link = document.createElement('a')
+        link.style.display = 'none'
+        link.href = url;
+        link.setAttribute('download', filename);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+    xhr.send();
 }
 </script>
 
