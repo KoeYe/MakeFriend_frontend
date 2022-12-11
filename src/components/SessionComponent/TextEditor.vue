@@ -1,7 +1,7 @@
 <template>
     <div>
         <a-row style="margin:10px" justify="space-between">
-        <a-col :span="1"
+        <a-col :span="0.5"
             style="margin-left:10px"
             >
             <icon-face-smile-fill
@@ -9,7 +9,7 @@
                 style="height: 27px;width: 27px;margin:5px;margin-top:0px;position:relative;top:7px;cursor:pointer"
             />
         </a-col>
-        <a-col :span="1">
+        <a-col :span="0.5">
             <div v-if="hasFile">
             <a-badge :text="fileList_[0].name" class="item">
             <el-upload

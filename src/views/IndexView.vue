@@ -33,7 +33,7 @@ const col = () => {
 <template>
   <a-layout class="base-container">
   <!--侧边栏-->
-    <a-layout-sider :collapsed="collapsed" collapsible @collapse="col" :width=sider_width :collapsed-width=0>
+    <a-layout-sider :collapsed="collapsed" collapsible @collapse="col" :width=350 :collapsed-width=0>
       <Aside />
     </a-layout-sider>
     <a-layout>
@@ -52,7 +52,7 @@ const col = () => {
 }
 
 .arco-layout-sider{
-  max-width: 25%;
+  max-width: 350;
   padding-left: 10px;
   padding-right: 10px;
   background-color: white;

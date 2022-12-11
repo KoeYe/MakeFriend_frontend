@@ -130,14 +130,11 @@ const onModel = () => {
     </a-col>
     <a-col flex="auto">
     <!-- <el-button type="danger" :icon="Delete" circle /> -->
-    <el-input style="height: 40px" placeholder="Search..." v-model="search_content"></el-input>
+      <el-input style="height: 40px" placeholder="Search..." v-model="search_content"></el-input>
     </a-col>
 </a-row>
 <div v-if="users">
     <div v-if="users.length>=1">
-      <!-- <el-table :data="users" style="width: 100%">
-          <el-table-column prop="username" style="width: 100%"/>
-      </el-table> -->
       <div v-for="user of users">
           <div v-if="(select!=user.id)">
               <a-card style="margin:10px" hoverable @click="setSession(user.id)">
@@ -146,17 +143,17 @@ const onModel = () => {
                   <a-col :span="5">
                     <el-avatar
                       :src="user.avatar"
-                      style="height: 60px; width: 60px"
+                      style="height: 50px; width: 50px; margin-left: -5px;"
                     />
                   </a-col>
                   <a-col :span="12">
-                    <a-typography-title :heading="3" :style="{ marginTop: '-10px'}">{{user.username}}</a-typography-title>
+                    <a-typography-title :heading="3" :style="{marginTop: '0px',}">{{user.username}}</a-typography-title>
                     <div v-if="(user.last_message.user==id)">
-                      <a-row>
-                        <a-col style="color:dodgerblue" :span="7"><a-typography-paragraph>You:</a-typography-paragraph></a-col>
+                      <a-row style="position:relative;top:-10px">
+                        <a-col style="color:dodgerblue" :span="7"><a-typography-paragraph style="color:dodgerblue;font-size:large;">You:</a-typography-paragraph></a-col>
                         <a-col :span="17">
                           <n-ellipsis style="max-width: 50%">
-                            <a-typography-paragraph>{{user.last_message.content}}</a-typography-paragraph>
+                            <a-typography-paragraph style="font-size:large;">{{user.last_message.content}}</a-typography-paragraph>
                           </n-ellipsis>
                         </a-col>
                       </a-row>
@@ -167,7 +164,7 @@ const onModel = () => {
                       </n-ellipsis>
                     </div>
                   </a-col>
-                  <a-col :span="5">
+                  <a-col :span="4" :offset="3">
                     <a-row><a-typography-paragraph>{{user.last_message.date}}</a-typography-paragraph></a-row>
                   </a-col>
                 </a-row>
@@ -181,20 +178,20 @@ const onModel = () => {
                 <a-col :span="5">
                   <el-avatar
                     :src="user.avatar"
-                    style="height: 60px; width: 60px"
+                    style="height: 50px; width: 50px; margin-left: -5px;"
                   />
                 </a-col>
                 <a-col :span="12">
-                  <a-row><a-typography-title :heading="3" :style="{ marginTop: '-10px', color:'white'}">{{user.username}}</a-typography-title></a-row>
+                  <a-row><a-typography-title :heading="3" :style="{ marginTop: '0px', color:'white'}">{{user.username}}</a-typography-title></a-row>
                   <div v-if="(user.last_message.user==id)">
-                    <a-row>
-                      <a-col :span="7"><a-typography-paragraph style="color:white">You:</a-typography-paragraph></a-col>
-                      <a-col :span="17">
-                        <n-ellipsis style="max-width: 50%">
-                          <a-typography-paragraph style="color:white">{{user.last_message.content}}</a-typography-paragraph>
-                        </n-ellipsis>
-                      </a-col>
-                    </a-row>
+                    <a-row style="position:relative;top:-10px;">
+                        <a-col style="color:dodgerblue" :span="7"><a-typography-paragraph style="color:white;font-size:large;">You:</a-typography-paragraph></a-col>
+                        <a-col :span="17">
+                          <n-ellipsis style="max-width: 50%">
+                            <a-typography-paragraph style="color:white;font-size:large;">{{user.last_message.content}}</a-typography-paragraph>
+                          </n-ellipsis>
+                        </a-col>
+                      </a-row>
                   </div>
                   <div v-else-if="(user.last_message.user!=id)">
                     <n-ellipsis style="max-width: 50%">
@@ -202,14 +199,13 @@ const onModel = () => {
                     </n-ellipsis>
                   </div>
                 </a-col>
-                <a-col :span="5">
+                <a-col :span="4" :offset="3">
                   <a-row><a-typography-paragraph style="color:white">{{user.last_message.date}}</a-typography-paragraph></a-row>
                 </a-col>
               </a-row>
             </a-badge>
             </a-card>
           </div>
-
       </div>
     </div>
 </div>
@@ -230,8 +226,5 @@ const onModel = () => {
   transition-property: all;
   height: 100px;
   border-radius: 5px;
-}
-.arco-card:hover {
-  transform: translateY(-4px);
 }
 </style>

@@ -125,7 +125,9 @@ const getProfile = () => {
       </div>
     </a-col>
     <a-col :span="2">
-      <h2 style="line-height:45px">{{user1_username}}</h2>
+      <a-typography-title :heading="2" :style="{margin: '0 0 0 0'}">
+        {{user1_username}}
+      </a-typography-title>
     </a-col>
     <a-col :span="1" style="margin-right:10px">
         <div v-if="(props.is_friend==0)">
