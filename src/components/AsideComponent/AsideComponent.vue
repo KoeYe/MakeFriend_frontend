@@ -4,7 +4,7 @@ import ModelContent from "../ModelComponent/ModelComponent.vue"
 import axios from "axios";
 import { ElMessage } from "element-plus";
 import { useRouter } from "vue-router";
-
+import { Notification } from '@arco-design/web-vue';
 const drawer = ref(false);
 const username = sessionStorage.getItem("username");
 const id = sessionStorage.getItem("id");
@@ -13,9 +13,10 @@ const search_content= ref("")
 const router = useRouter()
 //const emit = defineEmits(['changeSession'])
 const title = ref("Friends:")
-
+let searching = ref(false)
 watch(search_content, async (newSearch:string, oldSearch:string) => {
   if(newSearch.length!=0){
+    searching.value = true
     axios
     .post("/api/search", {
       search_content: newSearch
@@ -30,20 +31,57 @@ watch(search_content, async (newSearch:string, oldSearch:string) => {
       ElMessage.error(err.response.data)
     })
   } else {
+    searching.value=false
     loadFriends(id)
   }
 })
-
+let hasNotification = ref(false)
+let number = ref(0)
 const loadFriends = (id: string | null) => {
-  axios
+  if(!searching.value){
+    axios
     .get("/api/user/friends?user2_id="+id)
     .then((res)=>{
       console.log(res.data)
       users.value = res.data.friends
-      title.value = "Friends:"
+      let count = 0
+      for (let user of users.value){
+        count += user.message_number
+        if(count!=number.value){
+          number.value = count
+        }
+        if(isNaN(user.message_number)){
+          user.message_number = 0
+        }
+      }
     })
+    setTimeout(()=>{
+    loadFriends(id);
+  }, 1000)
+  }
 }
+
+watch(
+  number, (newNumber, oldNumber) => {
+    if(newNumber>0){
+      hasNotification.value = true
+      Notification.info(
+        {
+          title: 'You have '+newNumber+' new messages',
+          content: 'Please check your messages',
+          duration: 3000,
+          onClose: () => {
+            hasNotification.value = false
+          },
+        },
+      )
+    } else {
+      hasNotification.value = false
+    }
+  }
+)
 loadFriends(id)
+
 
 let users = ref([{
   id: "",
@@ -54,6 +92,7 @@ let users = ref([{
     date: "",
     user: "",
   },
+  message_number: 0,
 }])
 let select = ref(users.value[0].id)
 watch(select, async (newSelect:string, oldSelect:string) => {
@@ -80,91 +119,97 @@ const onModel = () => {
 }
 </script>
 <template>
-<el-row class="mb-4" style="height: 60px; padding-top: 10px;">
-    <el-col :span="4" style="padding: 0">
+<a-row class="mb-4" style="height: 60px; padding-top: 10px;">
+    <a-col :span="4" style="padding: 0">
     <el-button
         style="height: 40px"
         plain
         type="info"
         @click="onModel()"
     ><el-icon><Expand /></el-icon></el-button>
-    </el-col>
-    <el-col :span="20">
+    </a-col>
+    <a-col flex="auto">
     <!-- <el-button type="danger" :icon="Delete" circle /> -->
     <el-input style="height: 40px" placeholder="Search..." v-model="search_content"></el-input>
-    </el-col>
-</el-row>
+    </a-col>
+</a-row>
 <div v-if="users">
     <div v-if="users.length>=1">
-      <el-row>{{title}}</el-row>
       <!-- <el-table :data="users" style="width: 100%">
           <el-table-column prop="username" style="width: 100%"/>
       </el-table> -->
       <div v-for="user of users">
-        <div v-if="(select!=user.id)">
-          <el-card style="margin:10px;" shadow="hover" @click="setSession(user.id)">
-            <el-row>
-              <el-col :span="5">
-                <el-avatar
-                  :src="user.avatar"
-                />
-              </el-col>
-              <el-col :span="12">
-                <el-row><h3>{{user.username}}</h3></el-row>
-                <div v-if="(user.last_message.user==id)">
-                  <el-row>
-                    <el-col style="color:dodgerblue" :span="7">You:</el-col>
-                    <el-col :span="17">
+          <div v-if="(select!=user.id)">
+              <a-card style="margin:10px" hoverable @click="setSession(user.id)">
+                <a-badge style="width:95%" :offset="[35,-15]" :count="user.message_number" :max-count="99">
+                <a-row>
+                  <a-col :span="5">
+                    <el-avatar
+                      :src="user.avatar"
+                      style="height: 60px; width: 60px"
+                    />
+                  </a-col>
+                  <a-col :span="12">
+                    <a-typography-title :heading="3" :style="{ marginTop: '-10px'}">{{user.username}}</a-typography-title>
+                    <div v-if="(user.last_message.user==id)">
+                      <a-row>
+                        <a-col style="color:dodgerblue" :span="7"><a-typography-paragraph>You:</a-typography-paragraph></a-col>
+                        <a-col :span="17">
+                          <n-ellipsis style="max-width: 50%">
+                            <a-typography-paragraph>{{user.last_message.content}}</a-typography-paragraph>
+                          </n-ellipsis>
+                        </a-col>
+                      </a-row>
+                    </div>
+                    <div v-else-if="(user.last_message.user!=id)">
                       <n-ellipsis style="max-width: 50%">
-                        {{user.last_message.content}}
+                        <a-typography-paragraph>{{user.last_message.content}}</a-typography-paragraph>
                       </n-ellipsis>
-                    </el-col>
-                  </el-row>
-                </div>
-                <div v-else-if="(user.last_message.user!=id)">
-                  <n-ellipsis style="max-width: 50%">
-                  {{user.last_message.content}}
-                  </n-ellipsis>
-                </div>
-              </el-col>
-              <el-col :span="5">
-                <el-row>{{user.last_message.date}}</el-row>
-              </el-col>
-            </el-row>
-          </el-card>
-        </div>
-        <div v-else-if="(select==user.id)">
-          <el-card style="margin:10px; background-color: dodgerblue;color:white;" shadow="hover" @click="setSession(user.id)">
-            <el-row>
-              <el-col :span="5">
-                <el-avatar
-                  :src="user.avatar"
-                />
-              </el-col>
-              <el-col :span="12">
-                <el-row><h3>{{user.username}}</h3></el-row>
-                <div v-if="(user.last_message.user==id)">
-                  <el-row>
-                    <el-col :span="7">You:</el-col>
-                    <el-col :span="17">
-                      <n-ellipsis style="max-width: 50%">
-                        {{user.last_message.content}}
-                      </n-ellipsis>
-                    </el-col>
-                  </el-row>
-                </div>
-                <div v-else-if="(user.last_message.user!=id)">
-                  <n-ellipsis style="max-width: 50%">
-                    {{user.last_message.content}}
-                  </n-ellipsis>
-                </div>
-              </el-col>
-              <el-col :span="5">
-                <el-row>{{user.last_message.date}}</el-row>
-              </el-col>
-            </el-row>
-          </el-card>
-        </div>
+                    </div>
+                  </a-col>
+                  <a-col :span="5">
+                    <a-row><a-typography-paragraph>{{user.last_message.date}}</a-typography-paragraph></a-row>
+                  </a-col>
+                </a-row>
+              </a-badge>
+              </a-card>
+          </div>
+          <div v-else-if="(select==user.id)">
+            <a-card style="margin:10px;background-color: dodgerblue;" hoverable @click="setSession(user.id)">
+              <a-badge style="width:95%" :offset="[35,-15]" :count="user.message_number" :max-count="99">
+              <a-row style="color:white">
+                <a-col :span="5">
+                  <el-avatar
+                    :src="user.avatar"
+                    style="height: 60px; width: 60px"
+                  />
+                </a-col>
+                <a-col :span="12">
+                  <a-row><a-typography-title :heading="3" :style="{ marginTop: '-10px', color:'white'}">{{user.username}}</a-typography-title></a-row>
+                  <div v-if="(user.last_message.user==id)">
+                    <a-row>
+                      <a-col :span="7"><a-typography-paragraph style="color:white">You:</a-typography-paragraph></a-col>
+                      <a-col :span="17">
+                        <n-ellipsis style="max-width: 50%">
+                          <a-typography-paragraph style="color:white">{{user.last_message.content}}</a-typography-paragraph>
+                        </n-ellipsis>
+                      </a-col>
+                    </a-row>
+                  </div>
+                  <div v-else-if="(user.last_message.user!=id)">
+                    <n-ellipsis style="max-width: 50%">
+                      <a-typography-paragraph style="color:white">{{user.last_message.content}}</a-typography-paragraph>
+                    </n-ellipsis>
+                  </div>
+                </a-col>
+                <a-col :span="5">
+                  <a-row><a-typography-paragraph style="color:white">{{user.last_message.date}}</a-typography-paragraph></a-row>
+                </a-col>
+              </a-row>
+            </a-badge>
+            </a-card>
+          </div>
+
       </div>
     </div>
 </div>
@@ -179,3 +224,14 @@ const onModel = () => {
     <ModelContent :title_="username" :id="id"/>
   </el-drawer>
 </template>
+
+<style scoped>
+.arco-card{
+  transition-property: all;
+  height: 100px;
+  border-radius: 5px;
+}
+.arco-card:hover {
+  transform: translateY(-4px);
+}
+</style>

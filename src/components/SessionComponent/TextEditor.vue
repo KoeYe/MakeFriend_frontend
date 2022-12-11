@@ -1,13 +1,15 @@
 <template>
     <div>
-        <el-row style="margin:10px">
-        <el-col :span="1">
+        <a-row style="margin:10px" justify="space-between">
+        <a-col :span="1"
+            style="margin-left:10px"
+            >
             <icon-face-smile-fill
                 @click="showEmoji"
                 style="height: 27px;width: 27px;margin:5px;margin-top:0px;position:relative;top:7px;cursor:pointer"
             />
-        </el-col>
-        <el-col :span="1">
+        </a-col>
+        <a-col :span="1">
             <div v-if="hasFile">
             <a-badge :text="fileList_[0].name" class="item">
             <el-upload
@@ -54,8 +56,8 @@
                 </template>
             </el-upload>
         </div>
-        </el-col>
-        <el-col :span="19" style="margin-right:10px">
+        </a-col>
+        <a-col flex="auto">
             <el-form
                 style="width: 100%;"
                 hide-required-asterisk
@@ -68,11 +70,11 @@
                         <el-input onkeypress="if(event.keyCode == 13) return false;" @keyup.enter="onSend(formRef)" v-model="form.text" placeholder="Hello..." > </el-input>
                 </el-form-item>
             </el-form>
-        </el-col>
-        <el-col :span="1.5">
+        </a-col>
+        <a-col :span="1.5">
             <el-button
                 type="primary"
-                style="width: 100%;height:66%"
+                style="width: 90%;height:40px;margin-left:10px"
                 @click="onSend(formRef)"
             >
                 Send
@@ -80,8 +82,8 @@
                     <svg style="height:15px;margin-top:2.5px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 20 20"><g fill="none"><path d="M4.641 12.5l2.873 2.704a.75.75 0 0 1-1.028 1.092l-4.25-4a.75.75 0 0 1 0-1.092l4.25-4a.75.75 0 1 1 1.028 1.092L4.641 11H14.75a1.75 1.75 0 0 0 1.75-1.75v-4.5a.75.75 0 0 1 1.5 0v4.5a3.25 3.25 0 0 1-3.25 3.25H4.641z" fill="currentColor"></path></g></svg>
                 </div>
             </el-button>
-        </el-col>
-    </el-row>
+        </a-col>
+    </a-row>
 </div>
 </template>
 
@@ -103,11 +105,10 @@ import axios from "axios";
 // });
 let fileList_= ref<File[]>([])
 const selectAttach = () => {
-    console.log("selectAttach")
+    //console.log("selectAttach")
 
 }
 const handleUploadChange = (file:any, fileList: File[]) => {
-    console.log(file)
     console.log(fileList)
     if (file.status === "done") {
         ElMessage.success(`${file.name} file uploaded successfully.`);
@@ -119,10 +120,15 @@ const handleUploadChange = (file:any, fileList: File[]) => {
         //console.log(uploadRef.value!.UploadList[0])
         console.log('ready')
         fileList_.value.push(file)
-        hasFile.value = true;
+        if(fileList_.value.length>0){
+            hasFile.value = true;
+        }
     } else if (file.status === 'remove') {
         console.log('remove')
         fileList_.value = []
+        hasFile.value = false;
+    }
+    if(fileList.length===0){
         hasFile.value = false;
     }
 }
@@ -138,7 +144,7 @@ const beforeUpload = (file: File) => {
 }
 let headers = ref<Headers | Record<string, any>>()
 const onSend = (formEl: FormInstance | undefined)=>{
-    if (hasFile) {
+    if (hasFile.value) {
         console.log("hasFile")
         console.log(fileList_.value)
         //console.log(uploadRef.value!.uploadFiles)

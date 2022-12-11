@@ -18,6 +18,7 @@ const props = defineProps(["user1_id", "session_id", "is_friend"])
 let user1_username = ref("")
 const dropdown1 = ref()
 const size = ref('large')
+let avatar_url = ref("/api/user/avatar?id="+props.user1_id)
 const iconStyle = computed(() => {
   const marginMap:any = {
     large: '8px',
@@ -31,9 +32,13 @@ const iconStyle = computed(() => {
 watch(
     ()=>props.user1_id,
     async (NewId:string)=>{
-        //console.log(props.user1_id)
-        getUser(NewId)
+      if(NewId!=null){
         avatar_url.value="/api/user/avatar?id="+props.user1_id
+        getUser(NewId)
+      }else{
+        ElMessage.error("User state error!")
+      }
+        //console.log(props.user1_id)
     }
 )
 const getUser = (id:string) => {
@@ -90,6 +95,7 @@ const deleteFriend = (id:string) => {
     ElMessage.error(err.response.data)
     });
 }
+
 let user_ = ref({
   username: "",
   address: "",
@@ -98,7 +104,7 @@ let user_ = ref({
   remarks: 0
 })
 const dialogTableVisible = ref(false)
-let avatar_url = ref("/api/user/avatar?id="+props.user1_id)
+
 const getProfile = () => {
   axios
     .get("/api/user/profile?id="+props.user1_id)
@@ -110,18 +116,20 @@ const getProfile = () => {
 </script>
 <template>
 <div>
-    <el-row class="mb-4" style="height: 60px; padding-top: 10px;">
-    <el-col :span="1">
+    <a-row style="width:100%;height: 60px; padding: 10px;" justify="space-between">
+    <a-col :span="1" style="margin-left:10px">
+      <div v-if="user_.username!=null">
       <el-avatar @click="" style="cursor: pointer"
           :src="avatar_url"
         />
-    </el-col>
-    <el-col :span="10">
+      </div>
+    </a-col>
+    <a-col :span="2">
       <h2 style="line-height:45px">{{user1_username}}</h2>
-    </el-col>
-    <el-col :span="1" :offset="12">
+    </a-col>
+    <a-col :span="1" style="margin-right:10px">
         <div v-if="(props.is_friend==0)">
-          <el-dropdown ref="dropdown1" trigger="contextmenu" style="margin-right: 30px">
+          <el-dropdown ref="dropdown1" trigger="contextmenu" style="margin-right: 10px">
               <span class="el-dropdown-link">
                   <el-button @click="showClick" style="height: 40px; padding-top: 10px;"><el-icon><MoreFilled /></el-icon></el-button> 
               </span>
@@ -133,7 +141,7 @@ const getProfile = () => {
           </el-dropdown>
         </div>
         <div v-else-if="(props.is_friend==1)">
-          <el-dropdown ref="dropdown1" trigger="contextmenu" style="margin-right: 30px">
+          <el-dropdown ref="dropdown1" trigger="contextmenu" style="margin-right:10px">
             <span class="el-dropdown-link">
                 <el-button @click="showClick" style="height: 40px; padding-top: 10px;"><el-icon><MoreFilled /></el-icon></el-button> 
             </span>
@@ -162,8 +170,8 @@ const getProfile = () => {
             </template>
           </el-dialog>
         </div>
-    </el-col>
-    </el-row>
+    </a-col>
+    </a-row>
 </div>
 
 <el-dialog v-model="dialogTableVisible">

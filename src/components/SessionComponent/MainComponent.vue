@@ -138,7 +138,7 @@ const getMessage = () => {
     })
     setTimeout(()=>{
         getMessage()
-    },50000)
+    },1000)
 }
 getMessage()
 setTimeout(()=>{inputSlider()},200)

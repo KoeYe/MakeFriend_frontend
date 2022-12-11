@@ -49,7 +49,7 @@ checkFriends(user1_id.value)
     <!-- {{user1_id.value}} -->
   </a-layout-header>
   <a-layout-content>
-    <Main :session_id="route.params.session_id"/>
+    <Main :session_id="route.params.session_id" />
   </a-layout-content>
   <a-layout-footer>
     <TextEditor :user2_id="user2_id" :session_id="route.params.session_id"/>
