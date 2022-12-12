@@ -69,7 +69,7 @@ const addFriend = (id:string) => {
     axios
       .post("/api/user/make_friend", {
         user1_id: id,
-        user2_id: sessionStorage.getItem("id"),
+        user2_id: localStorage.getItem("id"),
         session_id: props.session_id
       })
       .then((res)=>{
@@ -86,7 +86,7 @@ const addFriend = (id:string) => {
 const deleteFriend = (id:string) => {
   dialogVisible.value = false
   axios
-    .delete("/api/user/make_friend?user1_id="+id+"&user2_id="+sessionStorage.getItem("id"))
+    .delete("/api/user/make_friend?user1_id="+id+"&user2_id="+localStorage.getItem("id"))
     .then((res)=>{
     ElMessage.success(res.data)
     emit('checkFriend')
@@ -151,7 +151,7 @@ const getProfile = () => {
             <el-dropdown-menu>
                 <el-dropdown-item @click="dialogVisible = true">- friend</el-dropdown-item>
                 <el-dropdown-item @click="getProfile"><icon-user /> profile</el-dropdown-item>
-                <el-dropdown-item @click="createGroup"><icon-user-group /> group</el-dropdown-item>
+                <el-dropdown-item @click=""><icon-user-group /> group</el-dropdown-item>
             </el-dropdown-menu>
             </template>
           </el-dropdown>

@@ -5,7 +5,7 @@ import TheWelcome from "../components/TheWelcome.vue";
 
 <template>
   <header>
-    <HelloWorld msg="Hello!" />
+    <HelloWorld msg="Welcome to Web-gram!" />
     <!-- <nav>
       <RouterLink to="/">Home</RouterLink>
       <RouterLink to="/index">Index</RouterLink>

@@ -11,10 +11,36 @@ import axios from 'axios';
 import ArcoVue from '@arco-design/web-vue';
 import naive from 'naive-ui'
 import ArcoVueIcon from '@arco-design/web-vue/es/icon';
+import * as Echarts from 'echarts'
 // axios.defaults.withCredentials=true;
-
+import { createStore } from 'vuex'
+axios.interceptors.request.use(
+    config => {
+        if (localStorage.getItem('token')) {
+            config.headers!.token = localStorage.getItem('token');
+        }
+        return config;
+    },
+    error => {
+        return Promise.reject(error);
+    }
+);
+// 创建一个新的 store 实例
+const store = createStore({
+  state () {
+    return {
+      count: 0
+    }
+  },
+  mutations: {
+    increment (state) {
+      state.count++
+    }
+  }
+})
 const app = createApp(App)
-
+app.use(store)
+app.config.globalProperties.$echarts = Echarts
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
     app.component(key, component)
 }

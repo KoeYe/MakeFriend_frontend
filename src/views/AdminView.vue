@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref, watch, reactive,onMounted } from "vue"
 
-import Aside from "../components/AsideComponent/AsideComponent.vue"
+import AdminAside from "../components/AdminComponent/AdminAside.vue"
 import Session from "../components/SessionComponent/SessionComponent.vue"
 import axios from "axios";
 import { ElMessage } from "element-plus";
@@ -34,7 +34,7 @@ const col = () => {
   <a-layout class="base-container">
   <!--侧边栏-->
     <a-layout-sider :collapsed="collapsed" collapsible @collapse="col" :width=350 :collapsed-width=0>
-      <Aside />
+      <AdminAside />
     </a-layout-sider>
     <a-layout>
       <router-view />

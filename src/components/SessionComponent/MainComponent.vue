@@ -126,7 +126,7 @@ const inputSlider = () => {
 
 let props = defineProps(["session_id"])
 let message:any = ref([])
-const user_id = sessionStorage.getItem('id')
+const user_id = localStorage.getItem('id')
 const getMessage = () => {
     axios.
     get("/api/session/message?session_id="+props.session_id)
@@ -138,7 +138,7 @@ const getMessage = () => {
     })
     setTimeout(()=>{
         getMessage()
-    },1000)
+    },100000)
 }
 getMessage()
 setTimeout(()=>{inputSlider()},200)

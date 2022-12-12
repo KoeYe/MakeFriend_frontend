@@ -6,10 +6,11 @@ import { ElMessage } from "element-plus";
 import { useRouter } from "vue-router";
 import { Notification } from '@arco-design/web-vue';
 const drawer = ref(false);
-const search_content= ref("")
-const router = useRouter()
 const username = localStorage.getItem("username");
 const id = localStorage.getItem("id");
+const model_title = ref("Hello " + username)
+const search_content= ref("")
+const router = useRouter()
 //const emit = defineEmits(['changeSession'])
 const title = ref("Friends:")
 let searching = ref(false)
@@ -31,57 +32,15 @@ watch(search_content, async (newSearch:string, oldSearch:string) => {
     })
   } else {
     searching.value=false
-    loadFriends()
+    users.value = []
   }
 })
-let hasNotification = ref(false)
-let number = ref(0)
-const loadFriends = () => {
-  if(!searching.value){
-    axios
-    .get("/api/user/friends")
-    .then((res)=>{
-      console.log(res.data)
-      users.value = res.data.friends
-      let count = 0
-      for (let user of users.value){
-        count += user.message_number
-        if(count!=number.value){
-          number.value = count
-        }
-        if(isNaN(user.message_number)){
-          user.message_number = 0
-        }
-      }
-    })
-    setTimeout(()=>{
-    loadFriends();
-  }, 100000)
-  }
+const check_all_users = () => {
+    router.replace({name: "all_users"})
 }
-
-watch(
-  number, (newNumber, oldNumber) => {
-    if(newNumber>0){
-      hasNotification.value = true
-      Notification.info(
-        {
-          title: 'You have '+newNumber+' new messages',
-          content: 'Please check your messages',
-          duration: 3000,
-          onClose: () => {
-            hasNotification.value = false
-          },
-        },
-      )
-    } else {
-      hasNotification.value = false
-    }
-  }
-)
-loadFriends()
-
-
+const check_statistics = () => {
+    router.replace({name: "statistics"})
+}
 let users = ref([{
   id: "",
   username: "",
@@ -93,26 +52,8 @@ let users = ref([{
   },
   message_number: 0,
 }])
-let select = ref(users.value[0].id)
-watch(select, async (newSelect:string, oldSelect:string) => {
-
-});
-const setSession = (id:string) => {
-  //ElMessage.info("Setting session...")
-  //console.log(id)
-  axios
-    .post("/api/session/session", {
-      user1_id: id,
-      user2_id: localStorage.getItem("id"),
-    })
-    .then((res)=>{
-      //console.log(res.data)
-      router.replace({name: "session", params: {session_id: res.data.session_id}})
-      select.value = id;
-    })
-    .catch((err) => {});
-}
-
+let select = ref('0')
+users.value = []
 const onModel = () => {
   drawer.value = true;
 }
@@ -136,7 +77,7 @@ const onModel = () => {
     <div v-if="users.length>=1">
       <div v-for="user of users">
           <div v-if="(select!=user.id)">
-              <a-card style="margin:10px" hoverable @click="setSession(user.id)">
+              <a-card style="margin:10px" hoverable @click="">
                 <a-badge style="width:95%" :offset="[35,-15]" :count="user.message_number" :max-count="99">
                 <a-row>
                   <a-col :span="5">
@@ -171,7 +112,7 @@ const onModel = () => {
               </a-card>
           </div>
           <div v-else-if="(select==user.id)">
-            <a-card style="margin:10px;background-color: dodgerblue;" hoverable @click="setSession(user.id)">
+            <a-card style="margin:10px;background-color: dodgerblue;" hoverable @click="">
               <a-badge style="width:95%" :offset="[35,-15]" :count="user.message_number" :max-count="99">
               <a-row style="color:white">
                 <a-col :span="5">
@@ -207,6 +148,14 @@ const onModel = () => {
           </div>
       </div>
     </div>
+    <div v-else>
+        <a-card style="margin:10px" hoverable @click="check_all_users">
+            <a-typography-title>All users</a-typography-title>
+        </a-card>
+        <a-card style="margin:10px" hoverable @click="check_statistics">
+            <a-typography-title>Statistics</a-typography-title>
+        </a-card>
+    </div>
 </div>
 <el-drawer
     :with-header="false"
@@ -216,7 +165,7 @@ const onModel = () => {
     :show-close=false
     size="25%"
   >
-    <ModelContent :title_="username" :id="id"/>
+    <ModelContent :title_="username" :id="0"/>
   </el-drawer>
 </template>
 

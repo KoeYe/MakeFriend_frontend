@@ -39,6 +39,7 @@ import { ElMessage } from "element-plus";
 import { reactive, ref } from "vue";
 import type { FormInstance } from 'element-plus'
 import { useRouter, useRoute } from 'vue-router'
+
 // do not use same name with ref
 const form = reactive({
   email: "",
@@ -72,13 +73,20 @@ const onLogin = (formEl: FormInstance | undefined) => {
       })
       .then((responsive) => {
         //const res = JSON.parse(responsive.data)
-        //console.log(responsive.data)
-        ElMessage.success(responsive.data.message);
-        router.push("/index");
-        sessionStorage.setItem("username", responsive.data.username)
-        //const username = sessionStorage.getItem("username");
-        //console.log("username in session:",username)
-        sessionStorage.setItem("id", responsive.data.id)
+        console.log(responsive.data)
+        if(responsive.data.id!=0){
+          ElMessage.success(responsive.data.message);
+          router.push("/index");
+          localStorage.setItem("username", responsive.data.username)
+          localStorage.setItem("token", responsive.data.token)
+          console.log(localStorage.getItem("token"))
+          //const username = localStorage.getItem("username");
+          //console.log("username in session:",username)
+          localStorage.setItem("id", responsive.data.id)
+        } else {
+          ElMessage.success(responsive.data.message);
+          router.push("/admin");
+        }
       })
       .catch((err) => {
         //console.log(err)

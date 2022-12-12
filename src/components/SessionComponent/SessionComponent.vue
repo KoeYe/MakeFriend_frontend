@@ -20,7 +20,7 @@ watch(
 )
 const getSession = (session_id:any) => {
   axios
-  .get("/api/session/session?session_id="+session_id+"&user_id="+sessionStorage.getItem("id"))
+  .get("/api/session/session?session_id="+session_id+"&user_id="+localStorage.getItem("id"))
   .then((res)=>{
     user1_id.value = res.data.user1_id
     user2_id.value = res.data.user2_id
@@ -33,7 +33,7 @@ const getSession = (session_id:any) => {
 const checkFriends = (user1_id:any) => {
   // console.log("checkFriends", user1_id)
   axios
-  .get("/api/user/make_friend?user1_id="+user1_id+"&user2_id="+sessionStorage.getItem("id"))
+  .get("/api/user/make_friend?user1_id="+user1_id+"&user2_id="+localStorage.getItem("id"))
   .then((res)=>{
     is_friend.value = res.data
    //console.log(is_friend.value)

@@ -50,15 +50,26 @@ const router = useRouter();
 const centerDialogVisible = ref(false)
 const logout = () => {
   //ElMessage.info("Log out...")
-  axios
+  if(props.id == '0'){
+    localStorage.removeItem("username")
+    localStorage.removeItem("id")
+    localStorage.removeItem("token")
+    ElMessage.success("Log out successfully!")
+    router.replace("/")
+  } else {
+    axios
     .post("/api/user/logout", {
       withCredentials : true
     }).then(()=>{
+      localStorage.removeItem("username")
+      localStorage.removeItem("id")
+      localStorage.removeItem("token")
       ElMessage.success("Log out successfully!")
       router.replace("/")
     }).catch(() => {
       ElMessage.error("Log out failed!")
     })
+  }
 }
 const dialogFormVisible = ref(false)
 const props = defineProps(["title_", "id"])

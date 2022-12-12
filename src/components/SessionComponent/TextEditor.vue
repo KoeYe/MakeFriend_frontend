@@ -5,7 +5,7 @@
             style="margin-left:10px"
             >
             <icon-face-smile-fill
-                @click="showEmoji"
+                @click=""
                 style="height: 27px;width: 27px;margin:5px;margin-top:0px;position:relative;top:7px;cursor:pointer"
             />
         </a-col>
@@ -151,7 +151,7 @@ const onSend = (formEl: FormInstance | undefined)=>{
         axios
         .post("/api/session/update_file_content",{
                 session_id: props.session_id,
-                user_id: sessionStorage.getItem("id"),
+                user_id: localStorage.getItem("id"),
                 content: form.text,
             })
         .then((res)=>{
@@ -174,7 +174,7 @@ const onSend = (formEl: FormInstance | undefined)=>{
             axios
             .post("/api/session/message",{
                 session_id: props.session_id,
-                user_id: sessionStorage.getItem("id"),
+                user_id: localStorage.getItem("id"),
                 content: form.text
             })
             .then((res)=>{

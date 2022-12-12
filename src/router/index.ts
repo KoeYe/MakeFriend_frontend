@@ -17,7 +17,7 @@ const router = createRouter({
       component: () => import("@/views/IndexView.vue"),
       children: [
         {
-          path: "index",
+          path: "/index",
           name: "index",
           component: () => import("@/components/HelloWorld.vue"),
         },
@@ -28,7 +28,37 @@ const router = createRouter({
         }
       ],
     },
+    {
+      path: "/admin",
+      component: () => import("@/views/AdminView.vue"),
+      children: [
+        {
+          path: "/all_users",
+          name: "all_users",
+          component: () => import("@/components/AdminComponent/AllUser.vue"),
+        },
+        {
+          path: "/statistics",
+          name: "statistics",
+          component: () => import("@/components/AdminComponent/StatisticPage.vue"),
+        }
+      ]
+    }
   ],
 });
+
+router.beforeEach((to, from, next) => {
+  if (to.path === '/') {
+      next();
+  } else {
+      let token = localStorage.getItem('token');
+      if (token === null || token === '') {
+          next('/');
+      } else {
+          next();
+      }
+    }
+  }
+);
 
 export default router;

@@ -11,17 +11,17 @@ defineProps({
   <img
       alt="Vue logo"
       class="logo"
-      src="@/assets/logo.svg"
+      src="@/assets/logo.png"
       width="125"
       height="125"
   />
   <div class="wrapper">
     <div class="greetings">
-      <h1 class="green">{{ msg }}</h1>
+      <h1 class="green" style="color:deepskyblue">{{ msg }}</h1>
       <h3>
         This is the website for my coursework by using
-        <a href="https://vitejs.dev/" target="_blank" rel="noopener">Vite</a> +
-        <a href="https://vuejs.org/" target="_blank" rel="noopener">Vue 3</a>.
+        <a href="https://vitejs.dev/" style="color:deepskyblue" target="_blank" rel="noopener">Vite</a> +
+        <a href="https://vuejs.org/" style="color:deepskyblue" target="_blank" rel="noopener">Vue 3</a>.
       </h3>
     </div>
   </div>

@@ -43,3 +43,5 @@ const onLogin = () => {
       <el-button @click="onRegister">Register</el-button>
     </div>
 </template>
+<style scoped>
+</style>
