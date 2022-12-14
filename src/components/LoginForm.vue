@@ -83,9 +83,11 @@ const onLogin = (formEl: FormInstance | undefined) => {
           //const username = localStorage.getItem("username");
           //console.log("username in session:",username)
           localStorage.setItem("id", responsive.data.id)
-        } else {
+        } else if (responsive.data.id === 0){
           ElMessage.success(responsive.data.message);
           router.push("/admin");
+          localStorage.setItem("username", responsive.data.username)
+          localStorage.setItem("token", responsive.data.token)
         }
       })
       .catch((err) => {
