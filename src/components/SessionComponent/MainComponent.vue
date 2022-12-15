@@ -194,7 +194,6 @@ const download = (url: string | URL, filename: string) => {
 .del-btn:hover{
     color: black;
 }
-
 .file:hover{
     color: rgb(131,176,240);
 }

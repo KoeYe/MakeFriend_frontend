@@ -41,6 +41,9 @@ const check_all_users = () => {
 const check_statistics = () => {
     router.replace({name: "statistics"})
 }
+const check_log = () => {
+    router.replace({name: "log"})
+}
 let users = ref([{
   id: "",
   username: "",
@@ -154,6 +157,9 @@ const onModel = () => {
         </a-card>
         <a-card style="margin:10px" hoverable @click="check_statistics">
             <a-typography-title>Statistics</a-typography-title>
+        </a-card>
+        <a-card style="margin:10px" hoverable @click="check_log">
+            <a-typography-title>Log</a-typography-title>
         </a-card>
     </div>
 </div>

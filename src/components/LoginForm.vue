@@ -73,21 +73,24 @@ const onLogin = (formEl: FormInstance | undefined) => {
       })
       .then((responsive) => {
         //const res = JSON.parse(responsive.data)
-        console.log(responsive.data)
-        if(responsive.data.id!=0){
-          ElMessage.success(responsive.data.message);
-          router.push("/index");
-          localStorage.setItem("username", responsive.data.username)
-          localStorage.setItem("token", responsive.data.token)
-          console.log(localStorage.getItem("token"))
-          //const username = localStorage.getItem("username");
-          //console.log("username in session:",username)
-          localStorage.setItem("id", responsive.data.id)
-        } else if (responsive.data.id === 0){
-          ElMessage.success(responsive.data.message);
-          router.push("/admin");
-          localStorage.setItem("username", responsive.data.username)
-          localStorage.setItem("token", responsive.data.token)
+        if(responsive.data.code==200){
+          if(responsive.data.id!=0){
+            ElMessage.success(responsive.data.message);
+            router.push("/index");
+            localStorage.setItem("username", responsive.data.username)
+            localStorage.setItem("token", responsive.data.token)
+            console.log(localStorage.getItem("token"))
+            //const username = localStorage.getItem("username");
+            //console.log("username in session:",username)
+            localStorage.setItem("id", responsive.data.id)
+          } else if (responsive.data.id === 0){
+            ElMessage.success(responsive.data.message);
+            router.push("/admin");
+            localStorage.setItem("username", responsive.data.username)
+            localStorage.setItem("token", responsive.data.token)
+          }
+        } else {
+          ElMessage.error(responsive.data.message);
         }
       })
       .catch((err) => {

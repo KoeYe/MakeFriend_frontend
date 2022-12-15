@@ -54,6 +54,9 @@ const loadFriends = () => {
         }
       }
     })
+    .catch((err)=>{
+      ElMessage.error(err.response.data)
+    })
     setTimeout(()=>{
     loadFriends();
   }, 100000)

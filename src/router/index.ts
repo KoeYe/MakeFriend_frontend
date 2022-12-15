@@ -41,6 +41,10 @@ const router = createRouter({
           path: "/statistics",
           name: "statistics",
           component: () => import("@/components/AdminComponent/StatisticPage.vue"),
+        },        {
+          path: "/log",
+          name: "log",
+          component: () => import("@/components/AdminComponent/LogPage.vue"),
         }
       ]
     }

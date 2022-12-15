@@ -17,7 +17,7 @@ import { createStore } from 'vuex'
 axios.interceptors.request.use(
     config => {
         if (localStorage.getItem('token')) {
-            config.headers!.token = localStorage.getItem('token');
+            config.headers!.token = localStorage.getItem('token')
         }
         return config;
     },
