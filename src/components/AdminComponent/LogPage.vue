@@ -30,22 +30,29 @@ const columns = [
   },
   {
     title: 'Level',
-    dataIndex: 'level',
+    slotName: 'level',
   },
   {
     title: 'Address',
     dataIndex: 'address',
   },
   {
-    title: 'Path',
-    dataIndex: 'path',
-  },
-  {
     title: 'Message',
     dataIndex: 'message',
   },
+  {
+    title: 'Path',
+    dataIndex: 'path',
+  },
 ]
+
 </script>
 <template>
-    <a-table id="table" :columns="columns" :data="logs" :pagination="false" />
+    <a-table id="table" :columns="columns" :data="logs" :pagination="true" >
+        <template #level="{ record }">
+            <a-tag v-if="record.level=='INFO'" color="green">{{ record.level }}</a-tag>
+            <a-tag v-else-if="record.level=='WARNING'" color="orange">{{ record.level }}</a-tag>
+            <a-tag v-else color="red">{{ record }}</a-tag>
+        </template>
+    </a-table>
 </template>

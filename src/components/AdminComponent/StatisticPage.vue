@@ -9,6 +9,7 @@ import { WindPower } from "@element-plus/icons-vue";
 const { proxy } = getCurrentInstance() as any
 let address = ref([])
 let address_number = ref([])
+let online_num = ref()
 let cardWidth = ref("")
 const cardstyle = ref({})
 let user_num = ref(0)
@@ -30,6 +31,7 @@ onMounted(() => {
         address.value = res.data.address
         address_number.value = res.data.address_number
         user_num.value = res.data.user_num
+        online_num.value = res.data.online_num
         let address_data  = []
         for(let i=0;i<address.value.length;i++){
             address_data.push({value: address_number.value[i], name: address.value[i]})
@@ -88,7 +90,7 @@ onMounted(() => {
       <icon-arrow-rise />
     </template>
   </a-statistic>
-  <a-statistic style="margin-left: 30px;" title="Online User Number" :value="user_num-2" :precision="0" :value-from="0" animation>
+  <a-statistic style="margin-left: 30px;" title="Online User Number" :value="online_num" :precision="0" :value-from="0" animation>
     <template #prefix>
       <icon-arrow-rise />
     </template>
