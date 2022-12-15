@@ -12,7 +12,9 @@
                     <a-popconfirm content="Are you sure you want to delete the message?" position="left"
                                     ok-text="Yes" cancel-text="No" @ok="deleteMessage(mess.id)"
                                     >
-                        <el-button :icon="Delete" circle class="del-btn"/>
+                        <a-button shape="circle" class="del-btn">
+                            <icon-redo />
+                        </a-button>
                     </a-popconfirm>
                     </div>
                     <el-card
@@ -87,15 +89,6 @@
                         </div>
                         <el-row justify="start" style="font-size:xx-small;margin:0px;color:gray">{{(mess.hour<10?'0'+mess.hour:mess.hour)}}:{{(mess.minute<10?'0'+mess.minute:mess.minute)}}</el-row>
                     </el-card>
-                    <div v-show="visibile(mess.id)==1"
-                        @mouseenter="mouseenter(mess.id)"
-                        @mouseleave="mouseleave(mess.id)">
-                    <a-popconfirm content="Are you sure you want to delete the message?" position="right"
-                                    ok-text="Yes" cancel-text="No" @ok="deleteMessage(mess.id)"
-                                    >
-                        <el-button :icon="Delete" circle class="del-btn"/>
-                    </a-popconfirm>
-                    </div>
                     </a-space>
                 </el-row>
             </div>
@@ -147,7 +140,7 @@ const mouseenter = (id:string) => {
     visibile_id.value = id
 }
 const mouseleave = (id:string) => {
-    setTimeout(()=>{visibile_id.value = ""},10000)
+    setTimeout(()=>{visibile_id.value = ""},5000)
 }
 const visibile = (id:string) => {
     if(visibile_id.value === id){
@@ -162,7 +155,6 @@ const deleteMessage = (id:any) => {
     delete("/api/session/message?message_id="+id)
     .then((res)=>{
         ElMessage.success(res.data)
-        //getMessage()
     })
 }
 const download = (url: string | URL, filename: string) => {
@@ -186,13 +178,13 @@ const download = (url: string | URL, filename: string) => {
 
 <style scoped>
 .del-btn{
-    background-color: rgba(0, 0, 0, 0.2);
+    background-color: rgba(237, 254, 219, 0.5);
     border-width: 0;
     position:relative;
     bottom: 5px;
 }
 .del-btn:hover{
-    color: black;
+    background-color: rgba(237, 254, 219, 1);
 }
 .file:hover{
     color: rgb(131,176,240);

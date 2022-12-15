@@ -27,10 +27,22 @@ const columns = [
   {
     title: 'Time',
     dataIndex: 'time',
+    sortable: {
+        sortDirections: ['descend', 'ascend'],
+    }
   },
   {
     title: 'Level',
     slotName: 'level',
+    filterable: {
+        filters: [
+            { text: 'INFO', value: 'INFO' },
+            { text: 'WARNING', value: 'WARNING' },
+            { text: 'ERROR', value: 'ERROR' },
+        ],
+        filter: (value:any, record:any) => record.level.includes(value),
+        multiple: false,
+    }
   },
   {
     title: 'Address',
