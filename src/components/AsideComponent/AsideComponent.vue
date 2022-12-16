@@ -31,19 +31,34 @@ watch(search_content, async (newSearch:string, oldSearch:string) => {
     })
   } else {
     searching.value=false
-    loadFriends()
+    load()
   }
 })
 let hasNotification = ref(false)
 let number = ref(0)
-const loadFriends = () => {
+const load = () => {
   if(!searching.value){
     axios
     .get("/api/user/friends")
     .then((res)=>{
-      console.log(res.data)
-      users.value = res.data.friends
       let count = 0
+      axios.get("/api/user/group")
+      .then((res2)=>{
+        console.log("res",res2.data)
+        groups.value = res2.data.groups
+        console.log(groups.value)
+        for (let group of groups.value){
+          count += group.message_number
+          if(count!=number.value){
+            number.value = count
+          }
+          if(isNaN(group.message_number)){
+            group.message_number = 0
+          }
+        }
+      })
+      //console.log(res.data)
+      users.value = res.data.friends
       for (let user of users.value){
         count += user.message_number
         if(count!=number.value){
@@ -58,11 +73,10 @@ const loadFriends = () => {
       ElMessage.error(err.response.data)
     })
     setTimeout(()=>{
-    loadFriends();
+    load();
   }, 100000)
   }
 }
-
 watch(
   number, (newNumber, oldNumber) => {
     if(newNumber>0){
@@ -82,7 +96,7 @@ watch(
     }
   }
 )
-loadFriends()
+load()
 
 
 let users = ref([{
@@ -97,6 +111,18 @@ let users = ref([{
   message_number: 0,
 }])
 let select = ref(users.value[0].id)
+
+let groups = ref([{
+  id: "",
+  name: "",
+  members: [],
+  last_message: {
+    content: "",
+    date: "",
+    user: "",
+  },
+  message_number: 0,
+}])
 watch(select, async (newSelect:string, oldSelect:string) => {
 
 });
@@ -210,6 +236,80 @@ const onModel = () => {
           </div>
       </div>
     </div>
+</div>
+<div v-if="groups">
+  <div v-for="group in groups">
+    <div v-if="(select!=group.id)">
+      <a-card style="margin:10px" hoverable @click="setSession(group.id)">
+        <a-badge style="width:95%" :offset="[35,-15]" :count="group.message_number" :max-count="99">
+        <a-row>
+          <a-col :span="5">
+            <el-avatar
+              src=""
+              style="height: 50px; width: 50px; margin-left: -5px;"
+            />
+          </a-col>
+          <a-col :span="12">
+            <a-typography-title :heading="3" :style="{marginTop: '0px',}">{{group.name}}</a-typography-title>
+            <div v-if="(group.last_message.user==id)">
+              <a-row style="position:relative;top:-10px">
+                <a-col style="color:dodgerblue" :span="7"><a-typography-paragraph style="color:dodgerblue;font-size:large;">You:</a-typography-paragraph></a-col>
+                <a-col :span="17">
+                  <n-ellipsis style="max-width: 50%">
+                    <a-typography-paragraph style="font-size:large;">{{group.last_message.content}}</a-typography-paragraph>
+                  </n-ellipsis>
+                </a-col>
+              </a-row>
+            </div>
+            <div v-else-if="(group.last_message.user!=id)">
+              <n-ellipsis style="max-width: 50%">
+                <a-typography-paragraph>{{group.last_message.content}}</a-typography-paragraph>
+              </n-ellipsis>
+            </div>
+          </a-col>
+          <a-col :span="4" :offset="3">
+            <a-row><a-typography-paragraph>{{group.last_message.date}}</a-typography-paragraph></a-row>
+          </a-col>
+        </a-row>
+      </a-badge>
+      </a-card>
+    </div>
+    <div v-else-if="(select==group.id)">
+      <a-card style="margin:10px;background-color: dodgerblue;" hoverable @click="setSession(group.id)">
+        <a-badge style="width:95%" :offset="[35,-15]" :count="group.message_number" :max-count="99">
+        <a-row style="color:white">
+          <a-col :span="5">
+            <el-avatar
+              src=""
+              style="height: 50px; width: 50px; margin-left: -5px;"
+            />
+          </a-col>
+          <a-col :span="12">
+            <a-typography-title :heading="3" :style="{marginTop: '0px',color:'white'}">{{group.name}}</a-typography-title>
+            <div v-if="(group.last_message.user==id)">
+              <a-row style="position:relative;top:-10px">
+                <a-col style="color:dodgerblue" :span="7"><a-typography-paragraph style="color:white;font-size:large;">You:</a-typography-paragraph></a-col>
+                <a-col :span="17">
+                  <n-ellipsis style="max-width: 50%">
+                    <a-typography-paragraph style="color:white;font-size:large;">{{group.last_message.content}}</a-typography-paragraph>
+                  </n-ellipsis>
+                </a-col>
+              </a-row>
+            </div>
+            <div v-else-if="(group.last_message.user!=id)">
+              <n-ellipsis style="max-width: 50%">
+                <a-typography-paragraph style="color:white">{{group.last_message.content}}</a-typography-paragraph>
+              </n-ellipsis>
+            </div>
+          </a-col>
+          <a-col :span="4" :offset="3">
+            <a-row><a-typography-paragraph style="color:white">{{group.last_message.date}}</a-typography-paragraph></a-row>
+          </a-col>
+        </a-row>
+      </a-badge>
+      </a-card>
+  </div>
+</div>
 </div>
 <el-drawer
     :with-header="false"
