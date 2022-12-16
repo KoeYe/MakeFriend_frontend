@@ -46,7 +46,6 @@ const load = () => {
       .then((res2)=>{
         console.log("res",res2.data)
         groups.value = res2.data.groups
-        console.log(groups.value)
         for (let group of groups.value){
           count += group.message_number
           if(count!=number.value){
@@ -77,6 +76,7 @@ const load = () => {
   }, 100000)
   }
 }
+
 watch(
   number, (newNumber, oldNumber) => {
     if(newNumber>0){
@@ -112,9 +112,9 @@ let users = ref([{
 }])
 let select = ref(users.value[0].id)
 
-let groups = ref([{
+let groups:any = ref([{
   id: "",
-  name: "",
+  group_name: "",
   members: [],
   last_message: {
     content: "",
@@ -137,14 +137,22 @@ const setSession = (id:string) => {
     .then((res)=>{
       //console.log(res.data)
       router.replace({name: "session", params: {session_id: res.data.session_id}})
-      select.value = id;
+      select.value = 's'+id;
     })
     .catch((err) => {});
+}
+
+const setGroup = (id:string) => {
+  //ElMessage.info("Setting session...")
+  //console.log(id)
+  router.replace({name: "group", params: {group_id: id}})
+  select.value = "g"+id;
 }
 
 const onModel = () => {
   drawer.value = true;
 }
+console.log(groups.value)
 </script>
 <template>
 <a-row class="mb-4" style="height: 60px; padding-top: 10px;">
@@ -164,7 +172,7 @@ const onModel = () => {
 <div v-if="users">
     <div v-if="users.length>=1">
       <div v-for="user of users">
-          <div v-if="(select!=user.id)">
+          <div v-if="(select!='s'+user.id)">
               <a-card style="margin:10px" hoverable @click="setSession(user.id)">
                 <a-badge style="width:95%" :offset="[35,-15]" :count="user.message_number" :max-count="99">
                 <a-row>
@@ -199,7 +207,7 @@ const onModel = () => {
               </a-badge>
               </a-card>
           </div>
-          <div v-else-if="(select==user.id)">
+          <div v-else-if="(select==='s'+user.id)">
             <a-card style="margin:10px;background-color: dodgerblue;" hoverable @click="setSession(user.id)">
               <a-badge style="width:95%" :offset="[35,-15]" :count="user.message_number" :max-count="99">
               <a-row style="color:white">
@@ -239,18 +247,26 @@ const onModel = () => {
 </div>
 <div v-if="groups">
   <div v-for="group in groups">
-    <div v-if="(select!=group.id)">
-      <a-card style="margin:10px" hoverable @click="setSession(group.id)">
+    <div v-if="(select!='g'+group.id)">
+      <a-card style="margin:10px" hoverable @click="setGroup(group.id)">
         <a-badge style="width:95%" :offset="[35,-15]" :count="group.message_number" :max-count="99">
         <a-row>
-          <a-col :span="5">
-            <el-avatar
-              src=""
-              style="height: 50px; width: 50px; margin-left: -5px;"
-            />
+          <a-col :span="8">
+            <a-avatar-group :size="32" :max-count="3">
+                <a-avatar
+                  v-for="member in group.members"
+                  shape="circle"
+                >
+                  <img
+                    fit="cover"
+                    alt="avatar"
+                    :src="member.avatar"
+                  />
+              </a-avatar>
+            </a-avatar-group>
           </a-col>
           <a-col :span="12">
-            <a-typography-title :heading="3" :style="{marginTop: '0px',}">{{group.name}}</a-typography-title>
+            <a-typography-title :heading="3" :style="{marginTop: '0px',}">{{group.group_name}}</a-typography-title>
             <div v-if="(group.last_message.user==id)">
               <a-row style="position:relative;top:-10px">
                 <a-col style="color:dodgerblue" :span="7"><a-typography-paragraph style="color:dodgerblue;font-size:large;">You:</a-typography-paragraph></a-col>
@@ -274,18 +290,26 @@ const onModel = () => {
       </a-badge>
       </a-card>
     </div>
-    <div v-else-if="(select==group.id)">
+    <div v-else-if="(select==='g'+group.id)">
       <a-card style="margin:10px;background-color: dodgerblue;" hoverable @click="setSession(group.id)">
         <a-badge style="width:95%" :offset="[35,-15]" :count="group.message_number" :max-count="99">
         <a-row style="color:white">
-          <a-col :span="5">
-            <el-avatar
-              src=""
-              style="height: 50px; width: 50px; margin-left: -5px;"
-            />
+          <a-col :span="8">
+            <a-avatar-group :size="32" :max-count="3">
+                <a-avatar
+                  v-for="member in group.members"
+                  shape="circle"
+                >
+                  <img
+                    fit="cover"
+                    alt="avatar"
+                    :src="member.avatar"
+                  />
+              </a-avatar>
+            </a-avatar-group>
           </a-col>
           <a-col :span="12">
-            <a-typography-title :heading="3" :style="{marginTop: '0px',color:'white'}">{{group.name}}</a-typography-title>
+            <a-typography-title :heading="3" :style="{marginTop: '0px',color:'white'}">{{group.group_name}}</a-typography-title>
             <div v-if="(group.last_message.user==id)">
               <a-row style="position:relative;top:-10px">
                 <a-col style="color:dodgerblue" :span="7"><a-typography-paragraph style="color:white;font-size:large;">You:</a-typography-paragraph></a-col>

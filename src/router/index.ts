@@ -25,6 +25,11 @@ const router = createRouter({
           path: "session/:session_id",
           name: "session",
           component: () => import("@/components/SessionComponent/SessionComponent.vue"),
+        },
+        {
+          path: "group/:group_id",
+          name: "group",
+          component: () => import("@/components/GroupComponent/GroupComponent.vue"),
         }
       ],
     },
