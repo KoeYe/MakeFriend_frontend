@@ -117,17 +117,17 @@ const inputSlider = () => {
     scrollbarRef.value?.setScrollTop(innerRef.value!.clientHeight-380)
 }
 
-let props = defineProps(["session_id"])
+let props = defineProps(["group_id"])
 let message:any = ref([])
 const user_id = localStorage.getItem('id')
 const getMessage = () => {
     axios.
-    get("/api/session/message?session_id="+props.session_id)
+    get("/api/group/message?group_id="+props.group_id)
     .then((res)=>{
         message.value = res.data.messages;
-        //console.log(message.value)
-        //console.log(message.value[message.value.length-1].content)
-        //console.log(message.value.length)
+        // console.log(message.value)
+        // console.log(message.value[message.value.length-1].content)
+        // console.log(message.value.length)
     })
     setTimeout(()=>{
         getMessage()
@@ -152,7 +152,7 @@ const visibile = (id:string) => {
 }
 const deleteMessage = (id:any) => {
     axios.
-    delete("/api/session/message?message_id="+id)
+    delete("/api/group/message?message_id="+id)
     .then((res)=>{
         ElMessage.success(res.data)
     })

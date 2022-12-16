@@ -13,9 +13,10 @@ const route = useRoute()
 watch(
   () => route.params.session_id,
   async newId => {
-  //console.log("session_id: " + newId)
-  getSession(newId)
-  console.log("user1:",user1_id.value,"user2:",user2_id.value)
+  if(newId != undefined){
+    getSession(newId)
+    console.log("user1:",user1_id.value,"user2:",user2_id.value)
+  }
   }
 )
 
@@ -26,7 +27,6 @@ const getSession = (session_id:any) => {
     console.log(res.data)
     user1_id.value = res.data.user1_id
     user2_id.value = res.data.user2_id
-    //console.log(res.data)
     console.log(user1_id.value, user2_id.value, session_id)
     checkFriends(user1_id.value)
   })

@@ -15,7 +15,7 @@
             <el-upload
                 ref="uploadRef"
                 class="upload"
-                action="/api/session/upload"
+                action="/api//upload"
                 :headers="headers"
                 :auto-upload="false"
                 :show-file-list="false"
@@ -38,7 +38,7 @@
             <el-upload
                 ref="uploadRef"
                 class="upload"
-                action="/api/session/upload"
+                action="/api//upload"
                 :headers="headers"
                 :auto-upload="false"
                 :show-file-list="false"
@@ -134,7 +134,7 @@ const handleUploadChange = (file:any, fileList: File[]) => {
 }
 let hasFile = ref(false)
 const uploadRef = ref<UploadInstance>()
-const props = defineProps(["session_id", "user2_id"])
+const props = defineProps(["group_id", "user2_id"])
 const beforeUpload = (file: File) => {
     const isLt2M = file.size / 1024 / 1024 < 4;
     if (!isLt2M) {
@@ -149,8 +149,8 @@ const onSend = (formEl: FormInstance | undefined)=>{
         console.log(fileList_.value)
         //console.log(uploadRef.value!.uploadFiles)
         axios
-        .post("/api/session/update_file_content",{
-                session_id: props.session_id,
+        .post("/api/group/update_file_content",{
+                group_id: props.group_id,
                 user_id: localStorage.getItem("id"),
                 content: form.text,
             })
@@ -172,8 +172,8 @@ const onSend = (formEl: FormInstance | undefined)=>{
         formEl.validate((valid: boolean)=>{
         if (valid) {
             axios
-            .post("/api/session/message",{
-                session_id: props.session_id,
+            .post("/api/group/message",{
+                group_id: props.group_id,
                 user_id: localStorage.getItem("id"),
                 content: form.text
             })

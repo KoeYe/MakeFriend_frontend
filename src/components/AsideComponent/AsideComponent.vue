@@ -127,26 +127,23 @@ watch(select, async (newSelect:string, oldSelect:string) => {
 
 });
 const setSession = (id:string) => {
-  //ElMessage.info("Setting session...")
-  //console.log(id)
   axios
     .post("/api/session/session", {
       user1_id: id,
       user2_id: localStorage.getItem("id"),
     })
-    .then((res)=>{
-      //console.log(res.data)
+    .then((res) => {
+      console.log(res.data)
       router.replace({name: "session", params: {session_id: res.data.session_id}})
       select.value = 's'+id;
+      console.log("select",select.value)
     })
-    .catch((err) => {});
 }
 
 const setGroup = (id:string) => {
-  //ElMessage.info("Setting session...")
-  //console.log(id)
   router.replace({name: "group", params: {group_id: id}})
-  select.value = "g"+id;
+  select.value = 'g'+id;
+  console.log("select",select.value)
 }
 
 const onModel = () => {
@@ -158,14 +155,13 @@ console.log(groups.value)
 <a-row class="mb-4" style="height: 60px; padding-top: 10px;">
     <a-col :span="4" style="padding: 0">
     <el-button
-        style="height: 40px"
-        plain
-        type="info"
-        @click="onModel()"
+      style="height: 40px"
+      plain
+      type="info"
+      @click="onModel()"
     ><el-icon><Expand /></el-icon></el-button>
     </a-col>
     <a-col flex="auto">
-    <!-- <el-button type="danger" :icon="Delete" circle /> -->
       <el-input style="height: 40px" placeholder="Search..." v-model="search_content"></el-input>
     </a-col>
 </a-row>
@@ -291,7 +287,7 @@ console.log(groups.value)
       </a-card>
     </div>
     <div v-else-if="(select==='g'+group.id)">
-      <a-card style="margin:10px;background-color: dodgerblue;" hoverable @click="setSession(group.id)">
+      <a-card style="margin:10px;background-color: dodgerblue;" hoverable @click="setGroup(group.id)">
         <a-badge style="width:95%" :offset="[35,-15]" :count="group.message_number" :max-count="99">
         <a-row style="color:white">
           <a-col :span="8">

@@ -2,48 +2,38 @@
 import { ref, watch, onMounted } from "vue"
 import { useRoute } from "vue-router"
 import axios from "axios";
-import Header from "./HeaderComponent.vue"
-import TextEditor from "./TextEditor.vue"
-import Main from "./MainComponent.vue"
-let user1_id = ref()
+import Header from "./GroupHeaderComponent.vue"
+import TextEditor from "./GroupTextEditor.vue"
+import Main from "./GroupMainComponent.vue"
 let user2_id = ref()
-let is_friend = ref()
+let members = ref()
+let name = ref()
 const route = useRoute()
 
 watch(
-  () => route.params.session_id,
+  () => route.params.group_id,
   async newId => {
-  //console.log("session_id: " + newId)
-  getSession(newId)
-  console.log("user1:",user1_id.value,"user2:",user2_id.value)
+  //console.log("_id: " + newId)
+  getGroup(newId)
+  console.log("user2:",user2_id.value)
   }
 )
 
-const getSession = (session_id:any) => {
+const getGroup = (group_id:any) => {
   axios
-  .get("/api/session/session?session_id="+session_id+"&user_id="+localStorage.getItem("id"))
+  .get("/api/group/group?group_id="+group_id)
   .then((res)=>{
     console.log(res.data)
-    user1_id.value = res.data.user1_id
     user2_id.value = res.data.user2_id
+    members.value = res.data.members
+    name.value = res.data.name
     //console.log(res.data)
-    console.log(user1_id.value, user2_id.value, session_id)
-    checkFriends(user1_id.value)
+    console.log(user2_id.value, group_id)
   })
 }
 
-const checkFriends = (user1_id:any) => {
-  // console.log("checkFriends", user1_id)
-  axios
-  .get("/api/user/make_friend?user1_id="+user1_id+"&user2_id="+localStorage.getItem("id"))
-  .then((res)=>{
-    is_friend.value = res.data
-    console.log(is_friend.value)
-  })
-}
 onMounted(()=>{
-  getSession(route.params.session_id)
-  checkFriends(user1_id.value)
+  getGroup(route.params.group_id)
 })
 
 
@@ -51,13 +41,13 @@ onMounted(()=>{
 <template>
 <a-layout>
   <a-layout-header>
-    <Header :user1_id="user1_id" :session_id="route.params.session_id" :is_friend="is_friend" @checkFriend="checkFriends(user1_id)" />
+    <Header :group_id="route.params.group_id" :group_name="name" :members="members"/>
   </a-layout-header>
   <a-layout-content>
-    <Main :session_id="route.params.session_id" />
+    <Main :group_id="route.params.group_id" />
   </a-layout-content>
   <a-layout-footer>
-    <TextEditor :user2_id="user2_id" :session_id="route.params.session_id"/>
+    <TextEditor :user2_id="user2_id" :group_id="route.params.group_id"/>
   </a-layout-footer>
 </a-layout>
 </template>

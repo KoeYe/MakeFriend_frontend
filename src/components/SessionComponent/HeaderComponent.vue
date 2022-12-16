@@ -230,7 +230,7 @@ const create = () => {
                       ]"
                       :validate-trigger="['change','input']"
                     >
-                      <a-select v-model="create_group_form.users" :min-tag-count="2" mode="tags" placeholder="Please select" multiple allow-search>
+                      <a-select :default-value="[props.user1_id]" v-model="create_group_form.users" :min-tag-count="2" mode="tags" placeholder="Please select" multiple allow-search>
                         <a-option v-for="item of friends" :value="item.id" >
                           {{ item.username }}
                         </a-option>
