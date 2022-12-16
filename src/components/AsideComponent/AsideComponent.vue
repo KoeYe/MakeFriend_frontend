@@ -279,7 +279,7 @@ console.log(groups.value)
               </n-ellipsis>
             </div>
           </a-col>
-          <a-col :span="4" :offset="3">
+          <a-col :span="4">
             <a-row><a-typography-paragraph>{{group.last_message.date}}</a-typography-paragraph></a-row>
           </a-col>
         </a-row>
@@ -322,7 +322,7 @@ console.log(groups.value)
               </n-ellipsis>
             </div>
           </a-col>
-          <a-col :span="4" :offset="3">
+          <a-col :span="4">
             <a-row><a-typography-paragraph style="color:white">{{group.last_message.date}}</a-typography-paragraph></a-row>
           </a-col>
         </a-row>

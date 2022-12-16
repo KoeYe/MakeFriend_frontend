@@ -27,8 +27,6 @@ const getGroup = (group_id:any) => {
     user2_id.value = res.data.user2_id
     members.value = res.data.members
     name.value = res.data.name
-    //console.log(res.data)
-    console.log(user2_id.value, group_id)
   })
 }
 

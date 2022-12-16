@@ -56,6 +56,9 @@
             <div v-if="(mess.user_id!=user_id)">
                 <el-row justify="start">
                     <a-space align='end' size='mini'>
+                    <a-avatar>
+                        <img :src="mess.user_avatar" />
+                    </a-avatar>
                     <el-card
                         @mouseenter="mouseenter(mess.id)"
                         @mouseleave="mouseleave(mess.id)"
@@ -125,9 +128,6 @@ const getMessage = () => {
     get("/api/group/message?group_id="+props.group_id)
     .then((res)=>{
         message.value = res.data.messages;
-        // console.log(message.value)
-        // console.log(message.value[message.value.length-1].content)
-        // console.log(message.value.length)
     })
     setTimeout(()=>{
         getMessage()
