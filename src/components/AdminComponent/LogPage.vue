@@ -23,7 +23,7 @@ const get_log = () => {
     })
 }
 get_log()
-const columns = [
+const columns:any = [
   {
     title: 'Time',
     dataIndex: 'time',

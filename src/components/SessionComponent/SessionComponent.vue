@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, watch } from "vue"
+import { ref, watch, onMounted } from "vue"
 import { useRoute } from "vue-router"
 import axios from "axios";
 import Header from "./HeaderComponent.vue"
@@ -15,17 +15,19 @@ watch(
   async newId => {
   //console.log("session_id: " + newId)
   getSession(newId)
-  //console.log("user1:",user1_id.value,"user2:",user2_id.value)
+  console.log("user1:",user1_id.value,"user2:",user2_id.value)
   }
 )
+
 const getSession = (session_id:any) => {
   axios
   .get("/api/session/session?session_id="+session_id+"&user_id="+localStorage.getItem("id"))
   .then((res)=>{
+    console.log(res.data)
     user1_id.value = res.data.user1_id
     user2_id.value = res.data.user2_id
     //console.log(res.data)
-    //console.log(user1_id.value, user2_id.value, session_id)
+    console.log(user1_id.value, user2_id.value, session_id)
     checkFriends(user1_id.value)
   })
 }
@@ -36,17 +38,20 @@ const checkFriends = (user1_id:any) => {
   .get("/api/user/make_friend?user1_id="+user1_id+"&user2_id="+localStorage.getItem("id"))
   .then((res)=>{
     is_friend.value = res.data
-   //console.log(is_friend.value)
+    console.log(is_friend.value)
   })
 }
-getSession(route.params.session_id)
-checkFriends(user1_id.value)
+onMounted(()=>{
+  getSession(route.params.session_id)
+  checkFriends(user1_id.value)
+})
+
+
 </script>
 <template>
 <a-layout>
   <a-layout-header>
-    <Header :user1_id="user1_id" :session_id="route.params.session_id" :is_friend="is_friend" @checkFriend="checkFriends(user1_id)"/>
-    <!-- {{user1_id.value}} -->
+    <Header :user1_id="user1_id" :session_id="route.params.session_id" :is_friend="is_friend" @checkFriend="checkFriends(user1_id)" />
   </a-layout-header>
   <a-layout-content>
     <Main :session_id="route.params.session_id" />

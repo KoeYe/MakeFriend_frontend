@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, watch, computed } from "vue"
+import { ref, watch, computed, onMounted } from "vue"
 import axios from 'axios';
 import { ElMessage } from "element-plus";
 import { ElMessageBox } from 'element-plus'
@@ -15,10 +15,24 @@ import {
 const emit = defineEmits(['getSession', 'checkFriend'])
 const dialogVisible = ref(false)
 const props = defineProps(["user1_id", "session_id", "is_friend"])
+const user2_id = localStorage.getItem("id")
 let user1_username = ref("")
 const dropdown1 = ref()
 const size = ref('large')
 let avatar_url = ref("/api/user/avatar?id="+props.user1_id)
+const friends:any = ref([])
+
+const get_friends = () => {
+  axios
+    .get("/api/user/friends")
+    .then((res)=>{
+      friends.value = res.data.friends
+    })
+    .catch((err)=>{
+      ElMessage.error(err.response.data)
+    })
+}
+
 const iconStyle = computed(() => {
   const marginMap:any = {
     large: '8px',
@@ -29,6 +43,7 @@ const iconStyle = computed(() => {
     marginRight: marginMap[size.value] || marginMap.default,
   }
 })
+
 watch(
     ()=>props.user1_id,
     async (NewId:string)=>{
@@ -41,8 +56,8 @@ watch(
         //console.log(props.user1_id)
     }
 )
+
 const getUser = (id:string) => {
-  console.log("id:",id)
 axios
   .get("/api/user/username?id="+id)
   .then((res)=>{
@@ -113,6 +128,31 @@ const getProfile = () => {
       user_.value = res.data
     })
 }
+let visible = ref(false)
+
+let create_group_form:any = ref({
+  name: "",
+  users:[],
+})
+const create_group = () => {
+  console.log("create group")
+  console.log(create_group_form.value)
+  axios
+    .post("/api/group/group", {
+      user2_id: localStorage.getItem("id"),
+      users: create_group_form.value.users,
+      name: create_group_form.value.name
+    })
+    .then((res)=>{
+      ElMessage.success(res.data)
+      emit('getSession')
+    })
+}
+const create = () => {
+  visible.value = true
+  get_friends()
+  create_group_form.value.users = [props.user1_id]
+}
 </script>
 <template>
 <div>
@@ -133,7 +173,7 @@ const getProfile = () => {
         <div v-if="(props.is_friend==0)">
           <el-dropdown ref="dropdown1" trigger="contextmenu" style="margin-right: 10px">
               <span class="el-dropdown-link">
-                  <el-button @click="showClick" style="height: 40px; padding-top: 10px;"><el-icon><MoreFilled /></el-icon></el-button> 
+                  <el-button @click="showClick" style="height: 40px; padding-top: 10px;"><el-icon><MoreFilled /></el-icon></el-button>
               </span>
               <template #dropdown>
               <el-dropdown-menu>
@@ -145,13 +185,59 @@ const getProfile = () => {
         <div v-else-if="(props.is_friend==1)">
           <el-dropdown ref="dropdown1" trigger="contextmenu" style="margin-right:10px">
             <span class="el-dropdown-link">
-                <el-button @click="showClick" style="height: 40px; padding-top: 10px;"><el-icon><MoreFilled /></el-icon></el-button> 
+                <el-button @click="showClick" style="height: 40px; padding-top: 10px;"><el-icon><MoreFilled /></el-icon></el-button>
             </span>
             <template #dropdown>
             <el-dropdown-menu>
                 <el-dropdown-item @click="dialogVisible = true">- friend</el-dropdown-item>
                 <el-dropdown-item @click="getProfile"><icon-user /> profile</el-dropdown-item>
-                <el-dropdown-item @click=""><icon-user-group /> group</el-dropdown-item>
+                <el-dropdown-item @click="create"><icon-user-group /> group</el-dropdown-item>
+                <a-modal v-model:visible="visible" @ok="create_group" title="Create Group">
+                  <a-form
+                    :model="create_group_form"
+                    layout="vertical"
+                  >
+                    <a-form-item
+                      label="Group Name"
+                      name="group_name"
+                      :rules="[
+                        {
+                          required: true,
+                          message: 'Please input group name',
+                        },
+                        {
+                          min: 2,
+                          message: 'Please input at least 2 characters',
+                        },
+                      ]"
+                      :validate-trigger="['change','input']"
+                    >
+                      <a-input v-model="create_group_form.name" />
+                    </a-form-item>
+                    <a-form-item
+                      label="Members"
+                      name="group_members"
+                      :rules="[
+                        {
+                          required: true,
+                          message: 'Please choose members',
+                        },
+                        {
+                          type: 'array',
+                          min: 2,
+                          message: 'Please choose at least 2 members',
+                        }
+                      ]"
+                      :validate-trigger="['change','input']"
+                    >
+                      <a-select v-model="create_group_form.users" :min-tag-count="2" mode="tags" placeholder="Please select" multiple allow-search>
+                        <a-option v-for="item of friends" :value="item.id" >
+                          {{ item.username }}
+                        </a-option>
+                      </a-select>
+                    </a-form-item>
+                  </a-form>
+                </a-modal>
             </el-dropdown-menu>
             </template>
           </el-dropdown>

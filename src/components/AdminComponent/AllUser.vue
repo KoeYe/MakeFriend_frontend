@@ -21,36 +21,36 @@ const getUser = () => {
     })
 }
 getUser()
-    const columns = [
-      {
-        title: 'ID',
-        dataIndex: 'id',
-      },
-      {
-        title: 'Name',
-        dataIndex: 'username',
-      },
-      {
-        title: 'Address',
-        dataIndex: 'address',
-      },
-      {
-        title: 'Email',
-        dataIndex: 'email',
-      },
-      {
-        title: 'Remarks',
-        dataIndex: 'remarks',
-      },
-      {
-        title: 'Phone',
-        dataIndex: 'phone',
-      },
-      {
-        title: 'Optional',
-        slotName: 'optional',
-      }
-    ]
+const columns = [
+  {
+    title: 'ID',
+    dataIndex: 'id',
+  },
+  {
+    title: 'Name',
+    dataIndex: 'username',
+  },
+  {
+    title: 'Address',
+    dataIndex: 'address',
+  },
+  {
+    title: 'Email',
+    dataIndex: 'email',
+  },
+  {
+    title: 'Remarks',
+    dataIndex: 'remarks',
+  },
+  {
+    title: 'Phone',
+    dataIndex: 'phone',
+  },
+  {
+    title: 'Optional',
+    slotName: 'optional',
+  }
+]
 
 const deleteUser = (id:string)=>{
     axios
@@ -66,9 +66,9 @@ const deleteUser = (id:string)=>{
 
 </script>
 <template>
-    <a-table :columns="columns" :data="users">
-        <template #optional="{ record }">
-        <a-button status="danger" @click="$modal.info({ title:'Confirm', content:'Are you sure to delete the user?', onOk:()=>{deleteUser(record.id)}})">delete</a-button>
-        </template>
-    </a-table>
+  <a-table :columns="columns" :data="users">
+      <template #optional="{ record }">
+      <a-button status="danger" @click="$modal.info({ title:'Confirm', content:'Are you sure to delete the user?', onOk:()=>{deleteUser(record.id)}})">delete</a-button>
+      </template>
+  </a-table>
 </template>
