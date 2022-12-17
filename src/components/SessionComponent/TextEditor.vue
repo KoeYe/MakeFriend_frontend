@@ -136,9 +136,9 @@ let hasFile = ref(false)
 const uploadRef = ref<UploadInstance>()
 const props = defineProps(["session_id", "user2_id"])
 const beforeUpload = (file: File) => {
-    const isLt2M = file.size / 1024 / 1024 < 4;
+    const isLt2M = file.size /1024 < 50;
     if (!isLt2M) {
-        ElMessage.error('Image must smaller than 4MB!');
+        ElMessage.error('Image must smaller than 50kb!');
     }
     return isLt2M;
 }
@@ -156,8 +156,8 @@ const onSend = (formEl: FormInstance | undefined)=>{
             })
         .then((res)=>{
             ElMessage.info("Sending...")
-            console.log(res.data)
-            headers.value = {"id":res.data.id}
+            console.log("post message id: "+res.data.id)
+            headers.value = {"id":res.data.id, "token": localStorage.getItem("token")}
             uploadRef.value!.submit()
         })
         .finally(()=>{

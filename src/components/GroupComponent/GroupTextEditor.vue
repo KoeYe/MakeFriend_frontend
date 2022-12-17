@@ -15,13 +15,14 @@
             <el-upload
                 ref="uploadRef"
                 class="upload"
-                action="/api//upload"
+                action="/api/group/upload"
                 :headers="headers"
                 :auto-upload="false"
                 :show-file-list="false"
                 :before-upload="beforeUpload"
                 :on-change="handleUploadChange"
                 :on-success="handleUploadSuccess"
+                :on-error="handleUploadError"
                 :limit=1
                 :file-list="fileList_"
             >
@@ -38,13 +39,14 @@
             <el-upload
                 ref="uploadRef"
                 class="upload"
-                action="/api//upload"
+                action="/api/group/upload"
                 :headers="headers"
                 :auto-upload="false"
                 :show-file-list="false"
                 :before-upload="beforeUpload"
                 :on-change="handleUploadChange"
                 :on-success="handleUploadSuccess"
+                :on-error="handleUploadError"
                 :limit=1
                 :file-list="fileList_"
             >
@@ -108,6 +110,12 @@ const selectAttach = () => {
     //console.log("selectAttach")
 
 }
+const handleUploadError = (err:any, file:any, fileList: File[]) => {
+    console.log(err)
+    console.log(file)
+    console.log(fileList)
+    ElMessage.error(`${file.name} file upload failed.`);
+}
 const handleUploadChange = (file:any, fileList: File[]) => {
     console.log(fileList)
     if (file.status === "done") {
@@ -135,13 +143,17 @@ const handleUploadChange = (file:any, fileList: File[]) => {
 let hasFile = ref(false)
 const uploadRef = ref<UploadInstance>()
 const props = defineProps(["group_id", "user2_id"])
+
 const beforeUpload = (file: File) => {
-    const isLt2M = file.size / 1024 / 1024 < 4;
+    const isLt2M = file.size /1024 < 50;
+    //console.log("beforeUpload")
     if (!isLt2M) {
-        ElMessage.error('Image must smaller than 4MB!');
+        //console.log("upload failed")
+        ElMessage.error('Image must smaller than 50kb!');
     }
     return isLt2M;
 }
+
 let headers = ref<Headers | Record<string, any>>()
 const onSend = (formEl: FormInstance | undefined)=>{
     if (hasFile.value) {
@@ -157,7 +169,7 @@ const onSend = (formEl: FormInstance | undefined)=>{
         .then((res)=>{
             ElMessage.info("Sending...")
             console.log(res.data)
-            headers.value = {"id":res.data.id}
+            headers.value = {"id":res.data.id, "token": localStorage.getItem("token")}
             uploadRef.value!.submit()
         })
         .finally(()=>{

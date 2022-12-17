@@ -62,7 +62,7 @@ axios
   .get("/api/user/username?id="+id)
   .then((res)=>{
     console.log(res.data)
-    user1_username.value = res.data
+    user1_username.value = res.data.username
   })
 }
 //console.log(user1_id.value)

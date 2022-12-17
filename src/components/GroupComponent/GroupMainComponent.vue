@@ -56,14 +56,14 @@
             <div v-if="(mess.user_id!=user_id)">
                 <el-row justify="start">
                     <a-space align='end' size='mini'>
-                    <a-avatar>
+                    <a-avatar style="margin-left:5px;margin-bottom: 5px;margin-right:0px">
                         <img :src="mess.user_avatar" />
                     </a-avatar>
                     <el-card
                         @mouseenter="mouseenter(mess.id)"
                         @mouseleave="mouseleave(mess.id)"
                         body-style="padding-top:5px; padding-bottom:5px"
-                        style="hover{box-shadow: 2px 2px 2px 2px;}; border-radius: 20px; margin:8px; text-align: right; width:fit-content;"
+                        style="hover{box-shadow: 2px 2px 2px 2px;}; border-radius: 20px; margin:2px; text-align: right; width:fit-content;"
                         shadow="hover"
                     >
                         <div v-if="(mess.type=='text')">
